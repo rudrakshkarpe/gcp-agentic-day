@@ -1,0 +1,19 @@
+Your Task: 
+Translating the Features to Backend Services to be Supported
+- Want you to generate the project structure for the back end repository in Python which would expose all the necessary endpoints which would be required for fulfilling and providing all the services that are going to describe in the above solution. 
+- Determine all the endpoints that would be exposed and would be required in order to cater to all the different features that have been described in the above solution. 
+- Focus only on the endpoints and the main services that they would expose to the front end application. Do not include a detailed information about the interactions within the functions that would be present in the code for the business logic for the endpoints.
+- Think carefully through and generate the schema. The interaction type with the endpoint, whether it's streaming or whether it's multimodal interaction, or whether it's a simply a normal REST API request keeping in focus the The objective and the various features that a single endpoint would support. Also make sure to generate the schema for the input and the output for each of the endpoints.
+
+Defining the Broad Project Structure
+- The next task after defining all the endpoints that would be required and the functionality that each of them would be supporting, It create a project directory structure with only the broader directories and modules created for the endpoints that have been decided to be used for the application, considering that the application would use Fast Api for exposing all the endpoints.
+
+- The project structure should be modular and scalable, allowing for easy addition of new features in the future. The structure should include directories for each major feature, such as crop disease diagnosis, market analysis, and government schemes navigation, along with shared utilities and configurations.
+
+- Physics structure food now should only contain the key and essential files which are needed for creating a first draft for the application without caring much for the side details of testing folders, but creating the core files and directories that would be needed for the application to run and be able to expose the endpoints that have been defined in the previous step.
+
+- While the project directory should be simple and should be a good place to start for a first draft to be created, it should still be created using best practices so that the project is scalable and can be extended in the future without much hassle.
+
+Make sure to use python best practices and conventions while generating the project structure. The project should be structured in a way that it can be easily understood by other developers and can be easily maintained in the long run.
+
+After creating the entire project structure, exhaust to provide a brief yet insightful description of how the application should be structured within the project directory and what purpose is served by each of the files that you propose to be created. 
