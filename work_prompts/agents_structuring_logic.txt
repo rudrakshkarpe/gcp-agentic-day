@@ -1,0 +1,10 @@
+## Delving into the Modules of the Application
+
+### 1. Crop Disease Diagnosis
+- The farmer can take a photo of a diseased plant using their smartphone camera.
+- The application would then prompt the user to provide information about the crop, which would help in diagnosing any problem or disease with the plant. The fixed set of questions, needed in every case would be posed to the user as per their preferred mode. It could be through a Form Interface, a Conversational Text Chat, or in a conversational manner in voice mode, ensuring that the user feels comfortable and engaged.
+- Along with the set fields which are to be fetched and asked from the user, in every case the. Application would also based on the analysis of the image and the provided information. Identify and determine whether it needs to task any further questions related to the diagnosis of the plant disease. To perceive answers to all such questions, the application would continue with an ongoing voice interactive dialog with the farmer until it has obtained all the necessary information it needs to perform a diagnosis and come up with the solutions. 
+- Next, the application would use a multimodal Gemini model on Vertex AI to analyze the image and the provided information, identify the pest or disease, and provide clear, actionable advice on locally available and affordable remedies.
+- The application would also provide information on the most prevalent diseases in the area, based on the user's location and the crop type. This would help the farmer understand the context of the problem and take preventive measures in the future.
+
+#Test
