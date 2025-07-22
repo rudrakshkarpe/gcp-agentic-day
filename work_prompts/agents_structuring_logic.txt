@@ -7,4 +7,4 @@
 - Next, the application would use a multimodal Gemini model on Vertex AI to analyze the image and the provided information, identify the pest or disease, and provide clear, actionable advice on locally available and affordable remedies.
 - The application would also provide information on the most prevalent diseases in the area, based on the user's location and the crop type. This would help the farmer understand the context of the problem and take preventive measures in the future.
 
-
+#Test
