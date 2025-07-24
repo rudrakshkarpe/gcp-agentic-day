@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+python-dotenv
+pydantic
+requests==2.32.4
+bs4==0.0.2
+google-adk==1.7.0
