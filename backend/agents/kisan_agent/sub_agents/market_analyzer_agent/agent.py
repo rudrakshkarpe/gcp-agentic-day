@@ -88,6 +88,6 @@ async def run_conversation():
                            session_id=SESSION_ID)
     print("Execution time: ---",time.time() - start_time)
  
-# --- Run Entry Point ---
-if __name__ == "__main__":
-    asyncio.run(run_conversation())
+# # --- Run Entry Point ---
+# if __name__ == "__main__":
+#     asyncio.run(run_conversation())
