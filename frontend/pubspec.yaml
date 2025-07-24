@@ -1,0 +1,62 @@
+name: kisan_app
+description: AI-powered farming assistant for Indian farmers
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.0.0
+  flutter: ^3.16.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  
+  # HTTP & API Communication
+  http: ^1.2.0
+  
+  # State Management
+  provider: ^6.1.1
+  
+  # UI & Navigation
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.19.0
+  
+  # Storage & Caching
+  shared_preferences: ^2.2.2
+  
+  # Utilities
+  uuid: ^4.3.3
+  
+  # Image Picker
+  image_picker: ^1.0.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+  
+  # Kannada font support
+  fonts:
+    - family: NotoSansKannada
+      fonts:
+        - asset: assets/fonts/NotoSansKannada-Regular.ttf
+        - asset: assets/fonts/NotoSansKannada-Bold.ttf
+          weight: 700
+  
+  assets:
+    - assets/images/
+    - assets/icons/
+    
+flutter_intl:
+  enabled: true
+  class_name: S
+  main_locale: kn
+  arb_dir: lib/l10n
+  output_dir: lib/generated
+  use_deferred_loading: false
