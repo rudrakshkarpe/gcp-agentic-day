@@ -1,0 +1,311 @@
+# ================================
+# COMPREHENSIVE .GITIGNORE FOR KISAN PROJECT
+# ================================
+
+# ================================
+# BACKEND SECURITY & SECRETS
+# ================================
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+backend/.venv/
+backend/venv/
+
+# Environment variables (ALL variations)
+.env*
+!.env.example
+backend/.env*
+!backend/.env.example
+frontend/.env*
+!frontend/.env.example
+
+# GCP & Firebase Secrets
+*.json
+!package*.json
+!pubspec.json
+!**/pubspec.json
+!analysis_options.json
+!devtools_options.json
+kisan-service-account-key.json
+*service-account*.json
+*credentials*.json
+firebase-adminsdk-*.json
+google-services.json
+GoogleService-Info.plist
+
+# API Keys and Tokens
+*api*key*
+*secret*
+*token*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+db.sqlite3
+database.db
+
+# ================================
+# FRONTEND SECURITY & SECRETS
+# ================================
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+.packages
+.package_config.json
+
+# Flutter Web
+/web/build/
+
+# Flutter Build outputs
+**/build/
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+
+# iOS Secrets and Build files
+**/ios/Runner/GoogleService-Info.plist
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/ServiceDefinitions.json
+**/ios/Runner.xcworkspace
+
+# Android Secrets and Build files
+**/android/app/google-services.json
+**/android/key.properties
+**/android/app/upload-keystore.jks
+**/android/app/debug.keystore
+**/android/app/release.keystore
+**/android/.gradle/
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/app/src/main/res/values/strings_secrets.xml
+
+# Fastlane
+**/ios/fastlane/report.xml
+**/ios/fastlane/Preview.html
+**/ios/fastlane/screenshots
+**/ios/fastlane/test_output
+**/android/fastlane/report.xml
+**/android/fastlane/Preview.html
+**/android/fastlane/screenshots
+**/android/fastlane/test_output
+
+# ================================
+# IDE & DEVELOPMENT TOOLS
+# ================================
+
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# IntelliJ/Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea_modules/
+*.sublime-*
+.vscode/
+
+# Xcode
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+*.xcworkspace/*
+!*.xcworkspace/contents.xcworkspacedata
+UserInterfaceState.xcuserstate
+project.xcworkspace/
+xcuserdata/
+
+# ================================
+# OPERATING SYSTEM FILES
+# ================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ================================
+# LOGS & TEMPORARY FILES
+# ================================
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+.nyc_output
+
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# ================================
+# DEPLOYMENT & CI/CD
+# ================================
+
+# Docker
+Dockerfile.prod
+docker-compose.override.yml
+.dockerignore
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Kubernetes
+*.yaml.local
+*.yml.local
+
+# CI/CD
+.github/workflows/*.local.yml
+
+# ================================
+# PROJECT SPECIFIC
+# ================================
+
+# Backup files
+*.bak
+*.backup
+*.tmp
+*.temp
+
+# Compressed files
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Test artifacts
+test-results/
+coverage/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Documentation build
+docs/_build/
+site/
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# ================================
+# SECURITY SCAN EXCLUSIONS
+# ================================
+# Files that should never be committed
+secrets/
+private/
+confidential/
+*.secrets
+*.private
+*.confidential
