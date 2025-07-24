@@ -22,9 +22,9 @@ ENV_FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 
 # Local PDF files to upload
 PDF_FILES = [
-    r"C:\Users\V115864\OneDrive - United Airlines\Documents\gcp-project-kisan\gcp-agentic-day\project-kisan-backend\kisan_agent\sub_agents\government_schemes_agent\documents\Karnataka Agri Schemes 24-25.pdf",
-    r"C:\Users\V115864\OneDrive - United Airlines\Documents\gcp-project-kisan\gcp-agentic-day\project-kisan-backend\kisan_agent\sub_agents\government_schemes_agent\documents\Schemes for Welfare of Farmers.pdf",
-    r"C:\Users\V115864\OneDrive - United Airlines\Documents\gcp-project-kisan\gcp-agentic-day\project-kisan-backend\kisan_agent\sub_agents\government_schemes_agent\documents\agriwelfare_links.pdf"
+    r"C:\Users\V115864\OneDrive - United Airlines\Documents\gcp-project-kisan\gcp-agentic-day\backend\agents\kisan_agent\sub_agents\government_schemes_agent\prepare_corpus\documents\agriwelfare_links.pdf",
+    r"C:\Users\V115864\OneDrive - United Airlines\Documents\gcp-project-kisan\gcp-agentic-day\backend\agents\kisan_agent\sub_agents\government_schemes_agent\prepare_corpus\documents\Karnataka Agri Schemes 24-25.pdf",
+    r"C:\Users\V115864\OneDrive - United Airlines\Documents\gcp-project-kisan\gcp-agentic-day\backend\agents\kisan_agent\sub_agents\government_schemes_agent\prepare_corpus\documents\Schemes for Welfare of Farmers.pdf"
 ]
 
 def initialize_vertex_ai():
