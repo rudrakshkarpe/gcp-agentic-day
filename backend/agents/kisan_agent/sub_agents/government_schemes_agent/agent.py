@@ -60,7 +60,7 @@ rag_agent = Agent(
 )
 
 # --- Main Agent ---
-root_agent = Agent(
+scheme_agent = Agent(
     model='gemini-2.5-flash',
     name="Govt_Agricultural_Scheme_Agent", 
     description="This is the main government scheme retriever agent that provides the final information (with portal links) from both google search and RAG retriever tools.",

@@ -1,6 +1,13 @@
 # Load environment variables from .env file
+
+
+"""Wrapper to Google Search Grounding with custom prompt."""
+
 import os
 import aiohttp
+from google.adk.agents import Agent
+from google.adk.tools.agent_tool import AgentTool
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -37,7 +44,7 @@ async def get_current_weather(city: str) -> dict:
             return {"status": "error", "error_message": "Weather API key not configured."}
         
         try:
-            url = f" http://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={city}"
+            url = f"http://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={city}"
             async with aiohttp.ClientSession() as session:
                 async with session.get(url) as response:
                     response.raise_for_status() # Raise an exception for HTTP errors
@@ -50,3 +57,13 @@ async def get_current_weather(city: str) -> dict:
             return {"status": "error", "error_message": f"Failed to connect to weather service: {e}"}
         except Exception as e:
             return {"status": "error", "error_message": f"An unexpected error occurred: {e}"}
+
+weather_agent = Agent(
+    model="gemini-2.5-flash",
+    name="weather_search_Agent",
+    description="An agent providing current weather",
+    instruction=""",
+    
+    """,
+    tools=[get_current_weather],
+)

@@ -10,6 +10,8 @@ from google.genai import types
 # Load environment variables from .env file
 from dotenv import load_dotenv
 load_dotenv()
+
+
 #sub market agent
 sub_market_agent = Agent(
     model="gemini-2.5-flash",
@@ -36,7 +38,7 @@ search_agent = Agent(
         ]
 )
 
-root_agent = Agent(
+market_agent = Agent(
     model = "gemini-2.5-flash",
     name="market_reserach_agent",
     description="This is main market analyzer angent.",
@@ -78,7 +80,7 @@ async def run_conversation():
  
     print(f"Session created: App='{APP_NAME}', User='{USER_ID}', Session='{SESSION_ID}'")
  
-    runner = Runner(agent=root_agent, app_name=APP_NAME, session_service=session_service)
+    runner = Runner(agent=market_agent, app_name=APP_NAME, session_service=session_service)
     print(f"Runner created for agent '{runner.agent.name}'.")
     import time
     start_time = time.time()
