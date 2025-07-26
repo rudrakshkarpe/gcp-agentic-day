@@ -4,8 +4,8 @@ import asyncio
 from google.adk.tools.google_search_tool import google_search
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
-from tools import scrape_agmarknet_trigger
-from sub_agents.market_analyzer_agent import prompt
+from kisan_agent.sub_agents.market_analyzer_agent.tools import scrape_agmarknet_trigger
+from kisan_agent.sub_agents.market_analyzer_agent import prompt
 from google.genai import types
 # Load environment variables from .env file
 from dotenv import load_dotenv
