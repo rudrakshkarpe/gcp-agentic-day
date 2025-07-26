@@ -2,7 +2,7 @@ from google.adk.agents import Agent
 from google.adk.tools.agent_tool import AgentTool
 from google.genai.types import GenerateContentConfig
 from kisan_agent.sub_agents.plant_health_support_agent import prompt
-from kisan_agent.sub_agents.plant_health_support_agent.tools import save_plant_info, _load_precreated_user_profile
+from kisan_agent.sub_agents.plant_health_support_agent.tools import _load_precreated_user_profile
 from kisan_agent.sub_agents.plant_health_support_agent.sub_agents.plant_disease_detection_agent.agent import plant_specialised_disease_detector_agent
 from kisan_agent.sub_agents.plant_health_support_agent.sub_agents.plant_treatment_plant_agent.agent import plant_treatment_plan_generator_agent
 
@@ -18,6 +18,6 @@ disease_agent = Agent(
         plant_specialised_disease_detector_agent,
         plant_treatment_plan_generator_agent,
     ],
-    tools=[save_plant_info],
+    # tools=[save_plant_info],
     before_agent_callback=_load_precreated_user_profile,
 )
