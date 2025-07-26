@@ -6,7 +6,8 @@ import httpx
 from pydantic import BaseModel
 import uvicorn
 from google.cloud import texttospeech, speech
-from agents.kisan_agent.agent import root_agent
+from vertexai import agent_engines
+#from agents.kisan_agent.agent import root_agent
 
 # --- FastAPI App Initialization ---
 app = FastAPI(
@@ -67,25 +68,22 @@ async def synthesize_text_to_speech(text: str) -> bytes:
 
 # --- External API Call Function ---
 from vertexai.preview import reasoning_engines
-def run_vertex_agent(text:str):
-    app = reasoning_engines.AdkApp(
-        agent = root_agent,
-        enable_tracing=True,
-    )
-    session = app.create_session(user_id="user")
-    final_response_text = ""
+def run_vertex_agent_local(text:str):
+    final_response_text = "this is a dummy response from the vertex agent"
+    return final_response_text
+
+def run_vertex_agent_deployed(text: str) -> str:
+    app = agent_engines.get("projects/dotted-hook-466603-f7/locations/europe-west1/reasoningEngines/211211785649258496")
+
+    session = app.create_session(user_id="u_456")
+
     for event in app.stream_query(
-        user_id="user",
+        user_id="u_456",
         session_id=session.id,
         message=text,
     ):
-        if event.is_final_response():
-            if event.content and event.content.parts:
-                final_response_text = event.content.parts[0].text
-            elif event.actions and event.actions.escalate:
-                final_response_text = f"Agent escalated: {event.error_message or 'No specific message.'}"
-            break
-    return final_response_text
+        print(event)
+
 
 async def call_external_api(text: str) -> str:
     """
@@ -95,7 +93,7 @@ async def call_external_api(text: str) -> str:
     try:
         # This is a placeholder. In a real scenario, the API would do something.
         # We'll just echo the text back in a structured way.
-        response_final = run_vertex_agent(text)
+        response_final = run_vertex_agent_deployed(text)
         return response_final
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"External API processing failed: {exc}")
@@ -115,7 +113,7 @@ async def chat_endpoint(text: str = Form(None), audio_file: UploadFile = File(No
     both a text response and a synthesized audio response.
     """
     print("HIT ENDPOINT",text)
-    text = "whats weather in delhi today"
+    # text = "whats weather in delhi today"
     input_text = ""
 
     # 1. Determine request type and get input text

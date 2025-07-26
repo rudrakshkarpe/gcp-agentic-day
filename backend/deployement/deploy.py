@@ -41,13 +41,13 @@ def create(env_vars: dict[str, str]) -> None:
         requirements=[
             "google-adk (==1.7.0)",
             "google-genai (==1.27.0)",
-            "bs4 (==0.0.2)"
+            "bs4 (==0.0.2)",
             "absl-py (>=2.2.1,<3.0.0)",
             "pydantic (>=2.10.6,<3.0.0)",
             "requests (>=2.32.3,<3.0.0)",
             "google-cloud-texttospeech (==2.27.0)",
             "google-cloud-speech (==2.33.0)"
-
+            "./agents/kisan_agent",  # The main package
         ],
         extra_packages=[
             "./agents",  # The main package

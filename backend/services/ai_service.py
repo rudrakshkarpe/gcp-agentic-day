@@ -11,7 +11,7 @@ except ImportError:
     Content = None
     Part = None
 
-from agents.kisan_agent.agent import kisan_agent_wrapper
+from kisan_agent.agent import kisan_agent_wrapper
 from config.settings import settings
 
 logger = logging.getLogger(__name__)

@@ -5,6 +5,7 @@
 # ================================
 # BACKEND SECURITY & SECRETS
 # ================================
+/work_prompts/
 
 # Python-generated files
 __pycache__/
