@@ -8,7 +8,5 @@ Main AI agent for providing comprehensive farming assistance including:
 - Government scheme information
 - Multi-language support (Kannada, Hindi, English)
 """
+from . import agent
 
-from .agent import KisanAgentWrapper, kisan_agent_wrapper
-
-__all__ = ["KisanAgentWrapper", "kisan_agent_wrapper"]
