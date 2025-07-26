@@ -29,13 +29,14 @@ sub_market_agent = Agent(
 search_agent = Agent(
     model="gemini-2.5-flash",
     name="google_search",
-    description="An agent which will perform google search on user query.",
+    description="An agent which will perform google search on user query to extract prices for nearby places.",
     disallow_transfer_to_parent=True,
     disallow_transfer_to_peers=True,
-    instruction=f"Extract wholesale commodity prices for commodity and place mentioned by user in query. Perform google search using provided tool to extract mandi data.",
+    instruction=f"Extract wholesale commodity prices for commodity and place mentioned by user in query. Also extract information for nearby places. Perform google search using provided tool to extract mandi data.",
     tools=[   
         google_search
-        ]
+        ],
+    output_key="market_prices_nearby"
 )
 
 market_agent = Agent(
@@ -47,49 +48,3 @@ market_agent = Agent(
         AgentTool(agent= sub_market_agent), AgentTool(agent = search_agent), 
     ]
 )
-
-# --- Agent Interaction Function ---
-async def call_agent_async(query: str, runner, user_id, session_id):
-    print(f"\n>>> User Query: {query}")
-    content = types.Content(role='user', parts=[types.Part(text=query)])
-    final_response_text = "Agent did not produce a final response."
-    
-    async for event in runner.run_async(user_id=user_id, session_id=session_id, new_message=content):
-        if event.is_final_response():
-            if event.content and event.content.parts:
-                final_response_text = event.content.parts[0].text
-            elif event.actions and event.actions.escalate:
-                final_response_text = f"Agent escalated: {event.error_message or 'No specific message.'}"
-            break
- 
-    print(f"<<< Agent Response: {final_response_text}")
- 
-# --- Main Run Function ---
-async def run_conversation():
-    # Use async for session creation
-    session_service = InMemorySessionService()
-    APP_NAME = "market_scheme"
-    USER_ID = "user_1"
-    SESSION_ID = "session_001"
- 
-    await session_service.create_session(
-        app_name=APP_NAME,
-        user_id=USER_ID,
-        session_id=SESSION_ID
-    )
- 
-    print(f"Session created: App='{APP_NAME}', User='{USER_ID}', Session='{SESSION_ID}'")
- 
-    runner = Runner(agent=market_agent, app_name=APP_NAME, session_service=session_service)
-    print(f"Runner created for agent '{runner.agent.name}'.")
-    import time
-    start_time = time.time()
-    await call_agent_async("what is price of potato today in Mumbai and Nagpur?",
-                           runner=runner,
-                           user_id=USER_ID,
-                           session_id=SESSION_ID)
-    print("Execution time: ---",time.time() - start_time)
- 
-# # --- Run Entry Point ---
-# if __name__ == "__main__":
-#     asyncio.run(run_conversation())

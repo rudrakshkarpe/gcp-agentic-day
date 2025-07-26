@@ -9,7 +9,7 @@ from plant_health_support_agent.sub_agents.plant_treatment_plant_agent.agent imp
 # This is the main entry point for the Kisan Agent.
 # Add your main agent logic her
 
-root_agent = Agent(
+disease_agent = Agent(
     model="gemini-2.5-flash",
     name="plant_health_support_agent",
     description="""A Plant Health Support Agent that using the services of multiple sub agents for helping farmers identify and manage plant diseases using images and descriptions of symptoms. It provides actionable advice on treatment and prevention.""",

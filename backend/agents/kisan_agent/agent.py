@@ -4,7 +4,7 @@ import prompt
 from google.adk.agents import Agent
 from sub_agents.government_schemes_agent.agent import scheme_agent
 from sub_agents.market_analyzer_agent.agent import market_agent
-from sub_agents.plant_disease_detector_agent.agent import disease_agent
+from sub_agents.plant_health_support_agent.agent import disease_agent
 from ..tools.weather_tool import weather_agent
 
 
@@ -17,5 +17,6 @@ root_agent = Agent(
         scheme_agent,
         market_agent,
         weather_agent,
+        disease_agent
     ],
 )
