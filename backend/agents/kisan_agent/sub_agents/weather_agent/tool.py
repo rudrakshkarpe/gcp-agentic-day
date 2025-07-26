@@ -20,7 +20,7 @@ async def get_current_weather(city: str) -> dict:
               If 'error', includes an 'error_message' key.
     """
     print(f"--- Tool: get_current_weather called for city: {city} ---")
-    response = {}
+    result = {}
     # --- Mock Weather Data (for demonstration) ---
     city_normalized = city.lower().replace(" ", "")
     mock_weather_db = {
@@ -36,7 +36,9 @@ async def get_current_weather(city: str) -> dict:
     else:
         WEATHER_API_KEY = os.getenv("WEATHER_API_KEY") # Get your API key from .env
         if not WEATHER_API_KEY:
-            response["Current_weather_report"]={"status": "error", "error_message": "Weather API key not configured."}
+            result["Current_weather_report"]={"status": "error", "error_message": "Weather API key not configured."}
+            result["One_week_weather_forecast"]={"status": "error", "error_message": "Weather API key not configured."}
+            return result
         
         try:
             url = f"http://api.weatherapi.com/v1/forecast.json?key={WEATHER_API_KEY}&q={city}&days={7}&tp={24}"
@@ -47,12 +49,14 @@ async def get_current_weather(city: str) -> dict:
                     # Process data and return structured weather report
                     temperature = data["current"]["temp_c"]
                     description = data["current"]["condition"]["text"].lower()
-                    response["Current_weather_report"] = {"status": "success", "report": f"The weather in {city} is {description} with a temperature of {temperature}°C."}
-                    response["One_week_weather_forecast"] = {}
+                    result["Current_weather_report"] = {"status": "success", "report": f"The weather in {city} is {description} with a temperature of {temperature}°C."}
+                    result["One_week_weather_forecast"] = {}
                     for dates in data["forecast"]["forecastday"]:
-                        response["One_week_weather_forecast"][dates["date"]] = {"status": "success", "report": dates["day"]}
-                    return response
+                        result["One_week_weather_forecast"][dates["date"]] = {"status": "success", "report": dates["day"]}
+                    return result
         except aiohttp.ClientError as e:
+            print(e)
             return {"status": "error", "error_message": f"Failed to connect to weather service: {e}"}
         except Exception as e:
+            print(e)
             return {"status": "error", "error_message": f"An unexpected error occurred: {e}"}

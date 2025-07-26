@@ -1,7 +1,8 @@
 # Load environment variables from .env file
 """Wrapper to Google Search Grounding with custom prompt."""
 from google.adk.agents import Agent
-from kisan_agent.sub_agents.weather_agent.tool import get_current_weather
+#from kisan_agent.sub_agents.weather_agent.tool import get_current_weather
+from tool import get_current_weather
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
@@ -17,6 +18,15 @@ weather_agent = Agent(
     instruction=""",
     You have been provided with current weather of city, and weather forecast of next 1 week. Collate and analyse this entire data and summarize a crisp weather report for
     farmers using their query. You have access to the tool - 'get_current_weather' which takes input as city name. Call this tool to extract information required to create final weather report.
+    After weather data has been provided in summarized form ask them what they would interested to know based on this weather information and provide them with below options:
+    Summarize report from all the dates and provide farmers with insighful information for:
+        1. Strategic Planning and Crop Management
+        2. Resource Management 
+        3. Harvesting and Post-Harvest Operations
+        4. Risk Mitigation and Disaster Preparedness
+
+    ---- If we have user reponse from above three, then provide them with short summary based on provided weather report and how it would affect each of the above point.
+    Summarize your response within 500 words.
     """,
     tools=[get_current_weather],
 )
@@ -57,7 +67,7 @@ async def run_conversation():
     print(f"Runner created for agent '{runner.agent.name}'.")
     import time
     start_time = time.time()
-    await call_agent_async("what is price of potato today in Mumbai and Nagpur?",
+    await call_agent_async("whats the weather in Delhi?",
                            runner=runner,
                            user_id=USER_ID,
                            session_id=SESSION_ID)
