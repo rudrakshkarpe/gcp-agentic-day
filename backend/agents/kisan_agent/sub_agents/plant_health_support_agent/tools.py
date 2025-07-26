@@ -44,34 +44,34 @@ import json
 #         return {"status": f"Failed to save image: {e}"}
 
 
-def save_plant_info(
-    tool_context: ToolContext, 
-    key: str, 
-    value: str
-):
-    """ 
-    Save plant information in the tool context state.
+# def save_plant_info(
+#     tool_context: ToolContext, 
+#     key: str, 
+#     value: str
+# ):
+#     """ 
+#     Save plant information in the tool context state.
 
-    Args:
-        key: the label indexing the memory to store the value. It should be one of the following: ['plant_name', 'disease_symptoms', 'pesticides_used'].
-        value: the information to be stored.
-        tool_context: The ADK tool context.
+#     Args:
+#         key: the label indexing the memory to store the value. It should be one of the following: ['plant_name', 'disease_symptoms', 'pesticides_used'].
+#         value: the information to be stored.
+#         tool_context: The ADK tool context.
 
-    Returns:
-        A status message.
-    """
-    try:
-        tool_context.state[key] = value
+#     Returns:
+#         A status message.
+#     """
+#     try:
+#         tool_context.state[key] = value
 
-        current_plant_info = tool_context.state.get("plant_info", {})
-        current_plant_info[key] = value
-        tool_context.state["plant_info"] = current_plant_info
+#         current_plant_info = tool_context.state.get("plant_info", {})
+#         current_plant_info[key] = value
+#         tool_context.state["plant_info"] = current_plant_info
 
-        print("Plant information saved successfully.")
-        return {"status": f'Stored "{key}": "{value}"'}
-    except Exception as e:
-        print(f"An error occurred while saving plant information: {e}")
-        return {"status": f"Failed to store {key}: {e}"}
+#         print("Plant information saved successfully.")
+#         return {"status": f'Stored "{key}": "{value}"'}
+#     except Exception as e:
+#         print(f"An error occurred while saving plant information: {e}")
+#         return {"status": f"Failed to store {key}: {e}"}
     
 
 def _set_initial_states(source: Dict[str, Any], target: State | dict[str, Any]):
@@ -98,8 +98,8 @@ def _load_precreated_user_profile(callback_context: CallbackContext):
         callback_context: The callback context.
     """    
     data = {}
-    INITIAL_STATE_PATH = "plant_health_support_agent/initial_data.json"
-    with open(INITIAL_STATE_PATH, "r") as file:
+    INITIAL_STATE_PATH = r"C:\Users\V115864\OneDrive - United Airlines\Documents\gcp-project-kisan\gcp-agentic-day\backend\agents\kisan_agent\sub_agents\plant_health_support_agent\initial_data.json"
+    with open(INITIAL_STATE_PATH) as file:
         data = json.load(file)
         print(f"\nLoading Initial State: {data}\n")
 

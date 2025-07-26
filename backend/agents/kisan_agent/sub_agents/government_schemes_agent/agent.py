@@ -70,6 +70,8 @@ scheme_agent = Agent(
         Make sure to include the relevant scheme portal links received from the two tools. In case there is no link provided, give the default link as: "https://raitamitra.karnataka.gov.in/english".
         WHILE SUMMARIZING THE RESPONSE, MAKE SURE to keep all the provided links by the two tools AT THE END OF THE RESPONSE. ONLY ADD THE DEFAULT LINK IF NO SPECIFIC LINK WAS PROVIDED.
         DO NOT add in the reponse that no specific link was provided, just give the default link.
+
+        Summarize the final answer in 500-600 words (make sure to always include links in the response). If the user asks to go in more detail, only then provide the detailed answer.
         """,
     tools=[AgentTool(agent=rag_agent), AgentTool(agent=search_agent)])
  

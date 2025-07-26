@@ -18,6 +18,6 @@ disease_agent = Agent(
         plant_specialised_disease_detector_agent,
         plant_treatment_plan_generator_agent,
     ],
-    tools=[save_plant_info],
+    # tools=[save_plant_info],
     before_agent_callback=_load_precreated_user_profile,
 )
