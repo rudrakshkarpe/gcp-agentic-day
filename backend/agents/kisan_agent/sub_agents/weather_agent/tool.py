@@ -1,12 +1,5 @@
-# Load environment variables from .env file
-
-
-"""Wrapper to Google Search Grounding with custom prompt."""
-
 import os
 import aiohttp
-from google.adk.agents import Agent
-from google.adk.tools.agent_tool import AgentTool
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -63,14 +56,3 @@ async def get_current_weather(city: str) -> dict:
             return {"status": "error", "error_message": f"Failed to connect to weather service: {e}"}
         except Exception as e:
             return {"status": "error", "error_message": f"An unexpected error occurred: {e}"}
-
-weather_agent = Agent(
-    model="gemini-2.5-flash",
-    name="weather_search_Agent",
-    description="An agent providing current weather",
-    instruction=""",
-    You have been provided with current weather of city, and weather forecast of next 1 week. Collate and analyse this entire data and summarize a crisp weather report for
-    farmers using their query. You have access to the tool - 'get_current_weather' which takes input as city name. Call this tool to extract information required to create final weather report.
-    """,
-    tools=[get_current_weather],
-)
