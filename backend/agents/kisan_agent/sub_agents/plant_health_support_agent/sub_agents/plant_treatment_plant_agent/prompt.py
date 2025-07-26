@@ -13,9 +13,10 @@ This section contains the necessary information for you to generate the treatmen
 <diagnosis>
 {diagnosis?}
 </diagnosis>
-2. User Profile:
+
+**2. User Profile:**
 <user_profile>
-{user_profile?}
+{farmer_info?}
 </user_profile>
 
 # INSTRUCTIONS & WORKFLOW

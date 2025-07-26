@@ -9,15 +9,14 @@ from agents.kisan_agent.sub_agents.plant_health_support_agent.sub_agents.plant_t
 # This is the main entry point for the Kisan Agent.
 # Add your main agent logic her
 
+# TODO: decide the questions to be asked to the User
 disease_agent = Agent(
     model="gemini-2.5-flash",
     name="plant_health_support_agent",
     description="""A Plant Health Support Agent that using the services of multiple sub agents for helping farmers identify and manage plant diseases using images and descriptions of symptoms. It provides actionable advice on treatment and prevention.""",
     instruction=prompt.PLANT_HEALTH_SUPPORT_AGENT_INSTRUCTION,
-    sub_agents=[
-        plant_specialised_disease_detector_agent,
-        plant_treatment_plan_generator_agent,
-    ],
-    # tools=[save_plant_info],
-    before_agent_callback=_load_precreated_user_profile,
+    tools=[
+        AgentTool(agent=plant_specialised_disease_detector_agent, name="plant_disease_detector"),
+        AgentTool(agent=plant_treatment_plan_generator_agent, name="plant_treatment_generator")
+    ]
 )
