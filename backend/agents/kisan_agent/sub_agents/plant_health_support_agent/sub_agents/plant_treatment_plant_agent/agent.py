@@ -1,7 +1,7 @@
 from google.adk.agents import Agent
 from google.adk.tools.agent_tool import AgentTool
 from google.genai.types import GenerateContentConfig
-from kisan_agent.sub_agents.plant_health_support_agent.sub_agents.plant_treatment_plant_agent import prompt
+from agents.kisan_agent.sub_agents.plant_health_support_agent.sub_agents.plant_treatment_plant_agent import prompt
 
 plant_treatment_plan_generator_agent = Agent(
     model="gemini-2.5-flash",

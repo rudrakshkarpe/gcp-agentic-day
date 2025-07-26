@@ -1,7 +1,7 @@
 from google.adk.agents import Agent
 from google.adk.tools.agent_tool import AgentTool
 from google.genai.types import GenerateContentConfig
-from kisan_agent.sub_agents.plant_health_support_agent.sub_agents.plant_disease_detection_agent import prompt
+from agents.kisan_agent.sub_agents.plant_health_support_agent.sub_agents.plant_disease_detection_agent import prompt
 
 
 plant_specialised_disease_detector_agent = Agent(
