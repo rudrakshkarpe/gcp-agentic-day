@@ -7,7 +7,7 @@ from pydantic import BaseModel
 import uvicorn
 from google.cloud import texttospeech, speech
 from vertexai import agent_engines
-#from agents.kisan_agent.agent import root_agent
+from agents.kisan_agent.agent import root_agent
 
 # --- FastAPI App Initialization ---
 app = FastAPI(
@@ -69,8 +69,26 @@ async def synthesize_text_to_speech(text: str) -> bytes:
 # --- External API Call Function ---
 from vertexai.preview import reasoning_engines
 def run_vertex_agent_local(text:str):
-    final_response_text = "this is a dummy response from the vertex agent"
-    return final_response_text
+
+    final_response = ""
+
+    app = reasoning_engines.AdkApp(
+    agent=root_agent,
+    enable_tracing=True,
+    )
+
+    session = app.create_session(user_id="u_456")
+
+    for event in app.stream_query(
+        user_id="u_456",
+        session_id=session.id,
+        message=text,
+    ):
+        if event.get("content") and event.get("content", {}).get("parts"):
+            final_response = event["content"]["parts"][0].get("text", "")
+        
+    return final_response
+
 
 def run_vertex_agent_deployed(text: str) -> str:
     app = agent_engines.get("projects/dotted-hook-466603-f7/locations/europe-west1/reasoningEngines/211211785649258496")
@@ -82,7 +100,10 @@ def run_vertex_agent_deployed(text: str) -> str:
         session_id=session.id,
         message=text,
     ):
-        print(event)
+        if event.get("content") and event.get("content", {}).get("parts"):
+            final_response = event["content"]["parts"][0].get("text", "")
+        
+    return final_response
 
 
 async def call_external_api(text: str) -> str:
