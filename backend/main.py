@@ -68,18 +68,15 @@ async def synthesize_text_to_speech(text: str) -> bytes:
 # --- External API Call Function ---
 from vertexai.preview import reasoning_engines
 def run_vertex_agent(text:str):
-    print("Break 1")
     app = reasoning_engines.AdkApp(
         agent = root_agent,
         enable_tracing=True,
     )
-    print("Break 2")
     session = app.create_session(user_id="user")
-    print("Break 3")
     final_response_text = ""
     for event in app.stream_query(
         user_id="user",
-        session_id=session["id"],
+        session_id=session.id,
         message=text,
     ):
         if event.is_final_response():

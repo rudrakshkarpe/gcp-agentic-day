@@ -1,13 +1,8 @@
 from google.adk.agents import Agent
 from google.adk.tools.agent_tool import AgentTool
 from google.genai.types import GenerateContentConfig
-<<<<<<< HEAD
 from agents.kisan_agent.sub_agents.plant_health_support_agent.sub_agents.plant_treatment_plant_agent import prompt
 
-=======
-from kisan_agent.sub_agents.plant_health_support_agent.sub_agents.plant_treatment_plant_agent import prompt
-from google.adk.tools import google_search
->>>>>>> 5c9f999720f767d951605d41d686c0d71d99b114
 
 
 plant_treatment_plan_generator_agent = Agent(
