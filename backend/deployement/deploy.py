@@ -45,6 +45,9 @@ def create(env_vars: dict[str, str]) -> None:
             "absl-py (>=2.2.1,<3.0.0)",
             "pydantic (>=2.10.6,<3.0.0)",
             "requests (>=2.32.3,<3.0.0)",
+            "google-cloud-texttospeech (==2.27.0)",
+            "google-cloud-speech (==2.33.0)"
+
         ],
         extra_packages=[
             "./agents",  # The main package
