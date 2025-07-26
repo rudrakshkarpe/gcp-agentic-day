@@ -22,7 +22,7 @@ This section contains the necessary information for you to perform the diagnosis
     3. User Profile:
         Information about the user that may provide geographic or scale-related context.
         <user_profile>
-        {farmer_info}
+        {farmer_info?}
         </user_profile>
 
 

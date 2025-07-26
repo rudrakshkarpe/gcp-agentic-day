@@ -16,7 +16,7 @@ disease_agent = Agent(
     description="""A Plant Health Support Agent that using the services of multiple sub agents for helping farmers identify and manage plant diseases using images and descriptions of symptoms. It provides actionable advice on treatment and prevention.""",
     instruction=prompt.PLANT_HEALTH_SUPPORT_AGENT_INSTRUCTION,
     tools=[
-        AgentTool(agent=plant_specialised_disease_detector_agent, name="plant_disease_detector"),
-        AgentTool(agent=plant_treatment_plan_generator_agent, name="plant_treatment_generator")
+        AgentTool(agent=plant_specialised_disease_detector_agent),
+        AgentTool(agent=plant_treatment_plan_generator_agent)
     ]
 )
