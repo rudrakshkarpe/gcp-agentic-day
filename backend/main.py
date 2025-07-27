@@ -92,7 +92,7 @@ def run_vertex_agent_local(text:str):
 
 
 def run_vertex_agent_deployed(text: str, initial_state: dict) -> str:
-    app = agent_engines.get("projects/dotted-hook-466603-f7/locations/europe-west1/reasoningEngines/211211785649258496")
+    app = agent_engines.get("projects/683449264474/locations/europe-west4/reasoningEngines/7676244827364655104")
 
     session = app.create_session(user_id=initial_state["name"], state = initial_state)
 
