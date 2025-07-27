@@ -45,6 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Location permissions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Kisan Kavach needs location access to provide location-specific farming advice and government schemes.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Kisan Kavach needs location access to provide location-specific farming advice and government schemes.</string>
 	<!-- Camera permission for plant disease diagnosis -->
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs camera access to capture plant images for disease diagnosis.</string>
@@ -57,8 +62,5 @@
 	<!-- Speech recognition permission -->
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>This app uses speech recognition to understand your voice commands in Kannada.</string>
-	<!-- Location permission for weather and market data -->
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs location access to provide local weather and market information.</string>
 </dict>
 </plist>

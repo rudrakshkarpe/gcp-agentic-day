@@ -39,7 +39,6 @@ Pesticides Used
 **3. Image Upload Status**
 - This indicates whether the user has uploaded an image of the affected plant.
 - If the image is not uploaded, you must request the user to upload a photo of the affected plant.
-- If the image is uploaded, you must save the image using the appropriate tool and proceed with calling the appropriate agent for the diagnosis.
 <image_upload_status>
 {image_upload_status}
 </image_upload_status>
@@ -54,7 +53,6 @@ Follow these steps in strict order. Do not proceed to the next step until the re
 **Step 2: Gather Essential Data**
 - Once the <image_upload_status> is `UPLOADED`, ensure that all the information within the plant information checklist is provided.
 - If any information is missing, you must request it from the user within one consolidated message.
-- Once you obtain any new information from the User which is a part of the check list, save it using the appropriate tool call.
 - While making the tool call for saving the plant info, if you have information about multiple fields, generate the multiple tool calls for saving them in the same step.
 
 **Step 3: Perform Diagnosis**

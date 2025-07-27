@@ -309,3 +309,4 @@ confidential/
 *.secrets
 *.private
 *.confidential
+frontend/ios/Runner/GoogleService-Info.plist

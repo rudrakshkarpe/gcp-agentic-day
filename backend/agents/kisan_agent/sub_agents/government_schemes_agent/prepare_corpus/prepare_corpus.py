@@ -18,13 +18,13 @@ if not LOCATION:
 
 CORPUS_DISPLAY_NAME = "Government_Schemes_corpus"
 CORPUS_DESCRIPTION = "Corpus containing government agricultural schemes document"
-ENV_FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
+ENV_FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", ".env"))
 
-# Local PDF files to upload
+# Local PDF files to upload (using relative paths)
 PDF_FILES = [
-    r"C:\Users\V115864\OneDrive - United Airlines\Documents\gcp-project-kisan\gcp-agentic-day\backend\agents\kisan_agent\sub_agents\government_schemes_agent\prepare_corpus\documents\agriwelfare_links.pdf",
-    r"C:\Users\V115864\OneDrive - United Airlines\Documents\gcp-project-kisan\gcp-agentic-day\backend\agents\kisan_agent\sub_agents\government_schemes_agent\prepare_corpus\documents\Karnataka Agri Schemes 24-25.pdf",
-    r"C:\Users\V115864\OneDrive - United Airlines\Documents\gcp-project-kisan\gcp-agentic-day\backend\agents\kisan_agent\sub_agents\government_schemes_agent\prepare_corpus\documents\Schemes for Welfare of Farmers.pdf"
+    os.path.join(os.path.dirname(__file__), "documents", "agriwelfare_links.pdf"),
+    os.path.join(os.path.dirname(__file__), "documents", "Karnataka Agri Schemes 24-25.pdf"),
+    os.path.join(os.path.dirname(__file__), "documents", "Schemes for Welfare of Farmers.pdf")
 ]
 
 def initialize_vertex_ai():
@@ -96,4 +96,3 @@ def main():
 
 if __name__ == "__main__":
     main()
- 

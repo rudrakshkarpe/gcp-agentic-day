@@ -32,11 +32,36 @@ dependencies:
   
   # Image Picker
   image_picker: ^1.0.7
+  
+  # Firebase - Latest versions with M4 Mac support
+  firebase_core: ^3.15.2
+  firebase_auth: ^5.7.0
+  cloud_firestore: ^5.6.12
+  
+  # Google Sign In - Temporarily disabled due to dependency conflicts
+  # google_sign_in: ^6.1.6
+  
+  # Location Services
+  geolocator: ^10.1.0
+  geocoding: ^2.1.1
+  permission_handler: ^11.0.1
+  
+  # Phone Auth UI Helper
+  pinput: ^3.0.1
+  
+  # Audio Recording & Playback
+  record: ^5.1.2
+  audioplayers: ^5.2.1
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.1
+
+dependency_overrides:
+  record_platform_interface: ^1.2.0
+  record_linux: ^1.1.1
 
 flutter:
   uses-material-design: true

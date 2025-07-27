@@ -1,372 +1,294 @@
-import asyncio
 import base64
-import uuid
-import logging
-from datetime import datetime
-from typing import Dict, List, Optional
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Depends
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from contextlib import asynccontextmanager
+import io
+from fastapi import FastAPI, File, Form, UploadFile, HTTPException
+from fastapi.responses import JSONResponse, StreamingResponse
+import httpx
+from pydantic import BaseModel
+import uvicorn
+from google.cloud import texttospeech, speech
+from vertexai import agent_engines
+from agents.kisan_agent.agent import root_agent
+import os
+import vertexai
 
-# Import our services and models
-from config.settings import settings
-from services.ai_service import KisanAIAgent
-from services.speech_service import SpeechService
-from models.requests import (
-    TextMessageRequest, VoiceMessageRequest, ImageAnalysisRequest,
-    UserContext, ConversationHistory
-)
-from models.responses import (
-    ChatResponse, VoiceResponse, ImageDiagnosisResponse,
-    ErrorResponse, HealthCheckResponse
-)
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Global conversation storage (use Redis/Firestore for production)
-conversations: Dict[str, Dict] = {}
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Initialize services on startup"""
-    logger.info("Starting Kisan AI Backend...")
-    
-    # Initialize AI agent
-    app.state.ai_agent = KisanAIAgent()
-    app.state.speech_service = SpeechService()
-    
-    logger.info("Services initialized successfully!")
-    yield
-    
-    # Cleanup if needed
-    logger.info("Shutting down...")
-
-# Create FastAPI app
+# --- FastAPI App Initialization ---
 app = FastAPI(
-    title="Kisan AI Assistant",
-    description="AI-powered farming assistant for Indian farmers",
+    title="Chat API with Text and Speech Processing",
+    description="An API that accepts text or audio, processes it, and returns text and speech.",
     version="1.0.0",
-    lifespan=lifespan
 )
 
-# CORS configuration
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+vertexai.init(
+    project='kisan-project-gcp',
+    location='europe-west4',
+    staging_bucket='kisan-project-gcp-kisan-sessions'
 )
+# --- Pydantic Models for Response ---
+class ChatResponse(BaseModel):
+    text_response: str
+    audio_response_base64: str
 
-# Helper functions
-def get_ai_agent() -> KisanAIAgent:
-    return app.state.ai_agent
+# --- Placeholder Functions for Gemini/Vertex AI ---
 
-def get_speech_service() -> SpeechService:
-    return app.state.speech_service
+async def recognize_speech_to_text(audio_bytes: bytes) -> str:
+    """
+    Simulates a call to the Gemini/Vertex AI Speech-to-Text API.
+    In a real implementation, you would use the Google Cloud client library.
+    """
+    print("--- Sending audio to Gemini STT (Simulated) ---")
+    # This is a placeholder. A real implementation would look like this:
+    #    
+    client = speech.SpeechClient()
+    audio = speech.RecognitionAudio(content=audio_bytes)
+    config = speech.RecognitionConfig(
+        encoding=speech.RecognitionConfig.AudioEncoding.MP4,
+        sample_rate_hertz=44100,
+        language_code=os.getenv("SPEECH_LANGUAGE", "kn-IN"),
+    )
+    response = client.recognize(config=config, audio=audio)
+    if not response.results:
+        raise HTTPException(status_code=400, detail="Could not transcribe audio.")
+    return response.results[0].alternatives[0].transcript
 
-def get_or_create_conversation(user_id: str) -> Dict:
-    """Get or create conversation state for user"""
-    if user_id not in conversations:
-        conversations[user_id] = {
-            "conversation_id": str(uuid.uuid4()),
-            "history": [],
-            "context": {
-                "location": "Karnataka",
-                "language": "kn",
-                "farming_type": "mixed",
-                "land_size": "small"
-            },
-            "created_at": datetime.now(),
-            "last_updated": datetime.now()
-        }
+
+async def synthesize_text_to_speech(text: str) -> bytes:
+    """
+    Simulates a call to the Gemini/Vertex AI Text-to-Speech API.
+    In a real implementation, you would use the Google Cloud client library.
+    """
+    print(f"--- Sending text to Gemini TTS (Simulated): '{text}' ---")
+    # This is a placeholder. A real implementation would look like this:
+    #
     
-    conversations[user_id]["last_updated"] = datetime.now()
-    return conversations[user_id]
+    client = texttospeech.TextToSpeechClient()
+    synthesis_input = texttospeech.SynthesisInput(text=text)
+    voice = texttospeech.VoiceSelectionParams(
+        language_code=os.getenv("TTS_LANGUAGE", "kn-IN"), 
+        name=os.getenv("TTS_VOICE", "kn-IN-Standard-A")
+    )
+    audio_config = texttospeech.AudioConfig(
+        audio_encoding=texttospeech.AudioEncoding.MP3
+    )
+    response = client.synthesize_speech(
+        input=synthesis_input, voice=voice, audio_config=audio_config
+    )
+    return response.audio_content
 
-def add_to_conversation_history(user_id: str, role: str, content: str, tools_used: List[str] = None):
-    """Add message to conversation history"""
-    conversation = get_or_create_conversation(user_id)
-    conversation["history"].append({
-        "role": role,
-        "content": content,
-        "timestamp": datetime.now(),
-        "tools_used": tools_used or []
-    })
+
+# --- External API Call Function ---
+from vertexai.preview import reasoning_engines
+def run_vertex_agent_local(text:str):
+
+    final_response = ""
+
+    app = reasoning_engines.AdkApp(
+    agent=root_agent,
+    enable_tracing=True,
+    )
+
+    session = app.create_session(user_id="u_456")
+
+    for event in app.stream_query(
+        user_id="u_456",
+        session_id=session.id,
+        message=text,
+    ):
+        if event.get("content") and event.get("content", {}).get("parts"):
+            final_response = event["content"]["parts"][0].get("text", "")
+        
+    return final_response
+
+
+def run_vertex_agent_deployed(text: str) -> str:
+    app = agent_engines.get("projects/683449264474/locations/europe-west4/reasoningEngines/7436428147207176192")
+
+    session = app.create_session(user_id="u_456")
+    print("Break 2")
+    for event in app.stream_query(
+        user_id="u_456",
+        session_id=session['id'],
+        message=text,
+    ):
+        if event.get("content") and event.get("content", {}).get("parts"):
+            final_response = event["content"]["parts"][0].get("text", "")
     
-    # Keep only last 20 messages to prevent memory issues
-    if len(conversation["history"]) > 20:
-        conversation["history"] = conversation["history"][-20:]
+    print("Break 3")
+    return final_response
 
-# API Routes
 
-@app.get("/", response_model=HealthCheckResponse)
-async def root():
-    """Health check endpoint"""
-    return HealthCheckResponse(
-        status="healthy",
-        services={
-            "ai_agent": "running",
-            "speech_service": "running",
-            "gemini_model": settings.GEMINI_MODEL
-        }
+async def call_external_api(text: str) -> str:
+    """
+    Makes a POST request to the external API.
+    """
+    print(f"--- Calling External API with text: '{text}' ---")
+    try:
+        # This is a placeholder. In a real scenario, the API would do something.
+        # We'll just echo the text back in a structured way.
+        print("Break 1")
+        response_final = run_vertex_agent_deployed(text)
+        return response_final
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"External API processing failed: {exc}")
+
+
+# --- API Endpoint ---
+
+@app.post("/api/chat_endpoint")
+async def chat_endpoint(text: str = Form(None), audio_file: UploadFile = File(None)):
+    """
+    This endpoint handles both text and audio chat requests.
+
+    - **To send text:** Use a form field named `text`.
+    - **To send audio:** Upload a file to a form field named `audio_file`.
+
+    The endpoint processes the input, calls an external API, and returns
+    both a text response and a synthesized audio response.
+    """
+    print("HIT ENDPOINT",text)
+    # text = "whats weather in delhi today"
+    input_text = ""
+
+    # 1. Determine request type and get input text
+    if audio_file:
+        print("--- Received audio file ---")
+        if not audio_file.content_type.startswith("audio/"):
+            raise HTTPException(status_code=400, detail="Invalid file type. Please upload an audio file.")
+        audio_bytes = await audio_file.read()
+        try:
+            input_text = await recognize_speech_to_text(audio_bytes)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Speech-to-Text processing failed: {e}")
+    else: # if text
+        print("--- Received text input ---")
+        input_text = text
+
+    # 2. Forward text to the external API
+    external_api_response_text = await call_external_api(input_text)
+
+    # 3. Pass the response to the TTS model
+    try:
+        final_audio_bytes = await synthesize_text_to_speech(external_api_response_text)
+        print(external_api_response_text)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Text-to-Speech processing failed: {e}")
+
+    # 4. Prepare and return the final response
+    # We can return the audio in two ways:
+    # a) As a base64 string within a JSON object for clients that prefer it.
+    # b) As a direct audio stream for browsers or clients that can play it.
+
+    # For this example, we'll return a JSON response with the base64 audio
+    # and also make the streaming audio available if requested via headers.
+    # A more advanced implementation could use the 'Accept' header to decide.
+
+    audio_base64 = base64.b64encode(final_audio_bytes).decode('utf-8')
+
+    response_data = ChatResponse(
+        text_response=external_api_response_text,
+        audio_response_base64=audio_base64
     )
 
-@app.get("/health", response_model=HealthCheckResponse)
-async def health_check():
-    """Detailed health check"""
-    return HealthCheckResponse(
-        status="healthy",
-        services={
-            "ai_agent": "running",
-            "speech_service": "running",
-            "vertex_ai": "connected",
-            "cloud_storage": "connected",
-            "gemini_model": settings.GEMINI_MODEL
-        }
-    )
+    # You could also return a streaming response directly like this:
+    # return StreamingResponse(io.BytesIO(final_audio_bytes), media_type="audio/mpeg")
 
-@app.post("/api/chat/text", response_model=ChatResponse)
-async def process_text_message(
-    request: TextMessageRequest,
-    ai_agent: KisanAIAgent = Depends(get_ai_agent)
+    return JSONResponse(content=response_data.dict())
+
+
+@app.post("/api/image_chat_endpoint")
+async def image_chat_endpoint(
+    image_file: UploadFile = File(...),
+    text: str = Form(...),
+    plant_type: str = Form(""),
+    symptoms: str = Form("")
 ):
-    """Process text message through AI agent"""
+    """
+    This endpoint handles image analysis with text prompts for agricultural assistance.
+
+    - **image_file:** Upload an image file (plant, crop, etc.)
+    - **text:** Text prompt describing what you want to know about the image
+    - **plant_type:** Optional plant type specification
+    - **symptoms:** Optional symptoms description
+
+    The endpoint processes the image and text, provides agricultural analysis,
+    and returns both text response and synthesized audio response.
+    """
+    print("HIT IMAGE ENDPOINT", text)
+    
+    # 1. Validate image file
+    if not image_file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload an image file.")
+    
+    # 2. Read image bytes
     try:
-        logger.info(f"Processing text message for user: {request.user_id}")
-        
-        # Get conversation context
-        conversation = get_or_create_conversation(request.user_id)
-        
-        # Process message through AI agent
-        response = await ai_agent.process_message(
-            message=request.message,
-            user_id=request.user_id,
-            conversation_history=conversation["history"],
-            user_context=conversation["context"]
-        )
-        
-        # Add to conversation history
-        add_to_conversation_history(request.user_id, "user", request.message)
-        add_to_conversation_history(
-            request.user_id, 
-            "assistant", 
-            response["response"], 
-            response.get("tools_used", [])
-        )
-        
-        return ChatResponse(
-            response=response["response"],
-            audio_url=response.get("audio_url"),
-            tools_used=response.get("tools_used", []),
-            conversation_id=conversation["conversation_id"],
-            confidence=response.get("confidence")
-        )
-        
+        image_bytes = await image_file.read()
+        print(f"--- Received image file: {image_file.filename} ({len(image_bytes)} bytes) ---")
     except Exception as e:
-        logger.error(f"Text message processing error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Message processing failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to read image file: {e}")
+    
+    # 3. Create comprehensive prompt for image analysis
+    image_analysis_prompt = f"""Please analyze this agricultural image and provide detailed insights.
 
-@app.post("/api/chat/voice", response_model=VoiceResponse)
-async def process_voice_message(
-    audio: UploadFile = File(...),
-    user_id: str = Form(...),
-    language: str = Form(default="kn-IN"),
-    ai_agent: KisanAIAgent = Depends(get_ai_agent),
-    speech_service: SpeechService = Depends(get_speech_service)
-):
-    """Process voice message - STT -> AI Agent -> TTS"""
+User Question: {text}
+"""
+    
+    if plant_type:
+        image_analysis_prompt += f"Plant Type: {plant_type}\n"
+    if symptoms:
+        image_analysis_prompt += f"Observed Symptoms: {symptoms}\n"
+    
+    image_analysis_prompt += """
+Please provide:
+1. What you can see in the image
+2. Plant/crop identification if applicable
+3. Health assessment
+4. Any diseases or issues identified 
+5. Recommended treatments or care
+6. Prevention measures
+7. General agricultural advice
+
+Focus on being practical and actionable for farmers."""
+
+    # 4. Forward prompt to the external API (without actual image processing for now)
+    # Note: In a full implementation, you would encode the image and send it to a vision model
     try:
-        logger.info(f"Processing voice message for user: {user_id}")
-        
-        # Read audio data
-        audio_data = await audio.read()
-        
-        # Convert speech to text
-        transcript = await speech_service.speech_to_text(audio_data, language)
-        logger.info(f"Transcript: {transcript}")
-        
-        # Process text through AI agent
-        conversation = get_or_create_conversation(user_id)
-        response = await ai_agent.process_message(
-            message=transcript,
-            user_id=user_id,
-            conversation_history=conversation["history"],
-            user_context=conversation["context"]
-        )
-        
-        # Add to conversation history
-        add_to_conversation_history(user_id, "user", f"🎤 {transcript}")
-        add_to_conversation_history(
-            user_id, 
-            "assistant", 
-            response["response"], 
-            response.get("tools_used", [])
-        )
-        
-        return VoiceResponse(
-            transcript=transcript,
-            response=response["response"],
-            audio_url=response.get("audio_url"),
-            tools_used=response.get("tools_used", []),
-            conversation_id=conversation["conversation_id"],
-            confidence=response.get("confidence")
-        )
-        
+        external_api_response_text = await call_external_api(image_analysis_prompt)
     except Exception as e:
-        logger.error(f"Voice message processing error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Voice processing failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Image analysis failed: {e}")
 
-@app.post("/api/chat/image", response_model=ImageDiagnosisResponse)
-async def process_image_diagnosis(
-    image: UploadFile = File(...),
-    user_id: str = Form(...),
-    plant_type: str = Form(default=""),
-    symptoms_description: str = Form(default=""),
-    message: str = Form(default="ಈ ಸಸ್ಯದ ಸಮಸ್ಯೆಯನ್ನು ಗುರುತಿಸಿ"),
-    ai_agent: KisanAIAgent = Depends(get_ai_agent)
-):
-    """Process plant disease diagnosis from image"""
+    # 5. Generate TTS response
     try:
-        logger.info(f"Processing image diagnosis for user: {user_id}")
-        
-        # Read and encode image
-        image_data = await image.read()
-        image_base64 = base64.b64encode(image_data).decode()
-        
-        # Process image through AI agent
-        response = await ai_agent.process_image_message(
-            image_data=image_base64,
-            message=message,
-            user_id=user_id,
-            plant_type=plant_type,
-            symptoms=symptoms_description
-        )
-        
-        # Add to conversation history
-        add_to_conversation_history(user_id, "user", f"📷 ಸಸ್ಯದ ಚಿತ್ರ ಅಪ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ ({plant_type})")
-        add_to_conversation_history(user_id, "assistant", response["diagnosis"])
-        
-        return ImageDiagnosisResponse(
-            diagnosis=response["diagnosis"],
-            disease_name=response.get("disease_name"),
-            severity=response.get("severity"),
-            treatment=response.get("treatment", []),
-            organic_remedies=response.get("organic_remedies", []),
-            chemical_treatment=response.get("chemical_treatment", []),
-            prevention=response.get("prevention", []),
-            confidence=response.get("confidence", 0.8),
-            audio_url=response.get("audio_url")
-        )
-        
+        final_audio_bytes = await synthesize_text_to_speech(external_api_response_text)
+        print("Generated TTS response for image analysis")
     except Exception as e:
-        logger.error(f"Image diagnosis error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Image analysis failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Text-to-Speech processing failed: {e}")
 
-@app.get("/api/chat/history/{user_id}")
-async def get_conversation_history(user_id: str):
-    """Get conversation history for user"""
-    try:
-        if user_id in conversations:
-            conversation = conversations[user_id]
-            return {
-                "conversation_id": conversation["conversation_id"],
-                "history": conversation["history"][-10:],  # Last 10 messages
-                "context": conversation["context"],
-                "last_updated": conversation["last_updated"]
-            }
-        else:
-            return {
-                "conversation_id": None,
-                "history": [],
-                "context": {},
-                "message": "No conversation found"
-            }
-            
-    except Exception as e:
-        logger.error(f"History retrieval error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"History retrieval failed: {str(e)}")
+    # 6. Prepare and return the response
+    audio_base64 = base64.b64encode(final_audio_bytes).decode('utf-8')
 
-@app.post("/api/user/context")
-async def update_user_context(user_id: str, context: UserContext):
-    """Update user context (location, farming type, etc.)"""
-    try:
-        conversation = get_or_create_conversation(user_id)
-        conversation["context"].update(context.dict(exclude_unset=True))
-        
-        return {
-            "message": "Context updated successfully",
-            "context": conversation["context"]
-        }
-        
-    except Exception as e:
-        logger.error(f"Context update error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Context update failed: {str(e)}")
+    # Structure response similar to ImageChatResponse format
+    response_data = {
+        "diagnosis": external_api_response_text,
+        "text_response": external_api_response_text,  # For compatibility
+        "audio_response_base64": audio_base64,
+        "disease_name": None,  # Could be enhanced with specific disease detection
+        "severity": None,
+        "treatment": [],
+        "organic_remedies": [],
+        "chemical_treatment": [],
+        "prevention": [],
+        "confidence": None
+    }
 
-@app.get("/api/market/prices")
-async def get_market_prices(
-    commodity: str,
-    location: str = "Karnataka",
-    ai_agent: KisanAIAgent = Depends(get_ai_agent)
-):
-    """Get current market prices for a commodity"""
-    try:
-        price_data = await ai_agent.get_market_prices(commodity, location)
-        return price_data
-        
-    except Exception as e:
-        logger.error(f"Market price error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Market price retrieval failed: {str(e)}")
+    return JSONResponse(content=response_data)
 
-@app.get("/api/schemes/search")
-async def search_schemes(
-    query: str,
-    farmer_category: str = "small",
-    ai_agent: KisanAIAgent = Depends(get_ai_agent)
-):
-    """Search government schemes"""
-    try:
-        schemes_data = await ai_agent.search_government_schemes(query, farmer_category)
-        return schemes_data
-        
-    except Exception as e:
-        logger.error(f"Schemes search error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Schemes search failed: {str(e)}")
 
-# Error handlers
-@app.exception_handler(HTTPException)
-async def http_exception_handler(request, exc):
-    """Handle HTTP exceptions"""
-    return JSONResponse(
-        status_code=exc.status_code,
-        content=ErrorResponse(
-            error="HTTP Error",
-            message=str(exc.detail),
-            code=str(exc.status_code)
-        ).dict()
-    )
+# --- Root endpoint for basic health check ---
+@app.get("/")
+def read_root():
+    return {"message": "Chat API is running. Go to /docs for API documentation."}
 
-@app.exception_handler(Exception)
-async def general_exception_handler(request, exc):
-    """Handle general exceptions"""
-    logger.error(f"Unhandled exception: {str(exc)}")
-    return JSONResponse(
-        status_code=500,
-        content=ErrorResponse(
-            error="Internal Server Error",
-            message="An unexpected error occurred",
-            code="500"
-        ).dict()
-    )
 
+# --- To run the app ---
+# Command: uvicorn main:app --reload
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(
-        "main:app",
-        host=settings.HOST,
-        port=settings.PORT,
-        reload=settings.DEBUG
-    )
+    uvicorn.run("main:app", host="0.0.0.0", port=8084, reload=True)

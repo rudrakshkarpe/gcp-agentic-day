@@ -12,10 +12,10 @@ Then call 'google_search' with user query
 **Input Summaries:**
 
 **Current Market Price:**
-{commodity_prices}
+'commodity_prices'
 
 **Prices Nearby:**
-{market_prices_nearby}
+'market_prices_nearby'
 
 When all the tools have been called, or given any other user utterance, 
 - Combine reponse from all the tools and analyze market trend to provide farmers with actionable insights about right time to sell thier crops.
