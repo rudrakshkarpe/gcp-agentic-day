@@ -7,7 +7,7 @@ from google.adk.sessions import VertexAiSessionService
 import vertexai
 from vertexai import agent_engines
 from vertexai.preview.reasoning_engines import AdkApp
-from google.adk.sessions import InMemorySessionService
+
 
 # %%
 project_id = "kisan-project-gcp"
@@ -36,16 +36,25 @@ vertexai.init(
 )
 
 
+def session_builder():
+    from google.adk.sessions import InMemorySessionService
+
+    return InMemorySessionService()
+
+
+
 # %%
 def create(env_vars: dict[str, str]) -> None:
     """Creates a new deployment."""
     print(env_vars)
+
+
+
     app = AdkApp(
         agent=root_agent,
         enable_tracing=True,
         env_vars=env_vars,
-        session_service_builder= InMemorySessionService(),
-
+        # session_service_builder=session_builder(),
     )
 
     remote_agent = agent_engines.create(  
