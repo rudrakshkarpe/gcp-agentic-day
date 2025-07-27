@@ -45,7 +45,7 @@ Perform below steps in step wise manner:
     </input1_foramt>
     Explanation 1: 
         1. In above example, input1 is dictionary of commodities as keys for which user wants to know the mandi prices. Each commodity key has 'state' and 'district' keys which will have list of those values extracted from user query.
-        2. If neither district nor state is mentioned in query, then by default take state value ['Karnataka'] and district value as ['Bengaluru'].
+        2. If neither district nor state is mentioned in query, then by default take state value {state} and district value as {city}.
         3. The above example is only for explanation purpose, do not use it to respond back.
         4. Extract all required data for input from user query.
 """

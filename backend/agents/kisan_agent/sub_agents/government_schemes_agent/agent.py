@@ -7,10 +7,8 @@ from vertexai.preview import rag
 from dotenv import load_dotenv
 from google.adk.tools.agent_tool import AgentTool
 from google.adk.tools import google_search
+from agents.kisan_agent.sub_agents.government_schemes_agent import prompt
 
-load_dotenv()
-
-user_loc = "Karnataka"
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 prompt_template_path = os.path.join(this_dir, "prompt_templates")
@@ -23,41 +21,41 @@ def get_prompt_template(template_name: str):
         )
         return jinja2_env.get_template(preferred_template_filename)
 
-google_search_agent_prompt = get_prompt_template("google_search_prompt").render()
-rag_retrieval_agent_prompt = get_prompt_template("rag_retrieval_prompt").render()
+# google_search_agent_prompt = get_prompt_template("google_search_prompt").render()
+# rag_retrieval_agent_prompt = get_prompt_template("rag_retrieval_prompt").render()
 
-# --- RAG Tool ---
-ask_vertex_retrieval = VertexAiRagRetrieval(
-    name='retrieve_rag_govt_schemes',
-    description=(
-        'Use this tool to retrieve reference materials and documentation for agricultural government scheme questions from the RAG corpus.'
-    ),
-    rag_resources=[
-        rag.RagResource(
-            rag_corpus=os.environ.get("RAG_CORPUS")
-        )
-    ],
-    similarity_top_k=6,
-    vector_distance_threshold=0.6,
-)
+# # --- RAG Tool ---
+# ask_vertex_retrieval = VertexAiRagRetrieval(
+#     name='retrieve_rag_govt_schemes',
+#     description=(
+#         'Use this tool to retrieve reference materials and documentation for agricultural government scheme questions from the RAG corpus.'
+#     ),
+#     rag_resources=[
+#         rag.RagResource(
+#             rag_corpus="projects/kisan-project-gcp/locations/europe-west4/ragCorpora/5764607523034234880"
+#         )
+#     ],
+#     similarity_top_k=6,
+#     vector_distance_threshold=0.6,
+# )
 
 # --- Google Search Tool ---
 search_agent = Agent(
     name="google_search_agent",
     model="gemini-2.0-flash",
     description="Agent to answer questions using Google Search related to farmer agricultural scheme queries.",
-    instruction=google_search_agent_prompt,
+    instruction=prompt.google_search_prompt,
     tools=[google_search]
 )
 
 # --- RAG Agent ---
-rag_agent = Agent(
-    model='gemini-2.5-flash',
-    name='ask_rag_agent',
-    description="An agent that answers questions about agricultural government schemes using a specialized corpus.",
-    instruction=rag_retrieval_agent_prompt,
-    tools=[ask_vertex_retrieval]
-)
+# rag_agent = Agent(
+#     model='gemini-2.5-flash',
+#     name='ask_rag_agent',
+#     description="An agent that answers questions about agricultural government schemes using a specialized corpus.",
+#     instruction=rag_retrieval_agent_prompt,
+#     tools=[ask_vertex_retrieval]
+# )
 
 # --- Main Agent ---
 scheme_agent = Agent(
@@ -73,5 +71,5 @@ scheme_agent = Agent(
 
         Summarize the final answer in 500-600 words (make sure to always include links in the response). If the user asks to go in more detail, only then provide the detailed answer.
         """,
-    tools=[AgentTool(agent=rag_agent), AgentTool(agent=search_agent)])
+    tools=[AgentTool(agent=search_agent)])
  

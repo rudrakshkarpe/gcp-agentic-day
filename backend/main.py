@@ -8,6 +8,7 @@ import uvicorn
 from google.cloud import texttospeech, speech
 from vertexai import agent_engines
 from agents.kisan_agent.agent import root_agent
+from typing import Any
 
 # --- FastAPI App Initialization ---
 app = FastAPI(
@@ -90,13 +91,13 @@ def run_vertex_agent_local(text:str):
     return final_response
 
 
-def run_vertex_agent_deployed(text: str) -> str:
+def run_vertex_agent_deployed(text: str, initial_state: dict) -> str:
     app = agent_engines.get("projects/dotted-hook-466603-f7/locations/europe-west1/reasoningEngines/211211785649258496")
 
-    session = app.create_session(user_id="u_456")
+    session = app.create_session(user_id=initial_state["name"], state = initial_state)
 
     for event in app.stream_query(
-        user_id="u_456",
+        user_id=initial_state["name"],
         session_id=session.id,
         message=text,
     ):
@@ -106,7 +107,7 @@ def run_vertex_agent_deployed(text: str) -> str:
     return final_response
 
 
-async def call_external_api(text: str) -> str:
+async def call_external_api(text: str,initial_state:dict) -> str:
     """
     Makes a POST request to the external API.
     """
@@ -114,7 +115,7 @@ async def call_external_api(text: str) -> str:
     try:
         # This is a placeholder. In a real scenario, the API would do something.
         # We'll just echo the text back in a structured way.
-        response_final = run_vertex_agent_deployed(text)
+        response_final = run_vertex_agent_deployed(text,initial_state)
         return response_final
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"External API processing failed: {exc}")
@@ -122,8 +123,36 @@ async def call_external_api(text: str) -> str:
 
 # --- API Endpoint ---
 
+class KisanChatSchema:
+    text: str = None
+    audio_file: Any= None
+    image: Any= None
+    city: str = "Bangalore"
+    name: str = ""
+    country: str = ""
+    state: str = ""
+    preferred_language: str = ""
+
+def create_initial_dict(request):
+    state_init = {
+            "state": {
+                "farmer_info": {
+                "name": request["name"], # Required
+                "location": {
+                    "city/town": request["city"], # One out of city/town, village, or district is required
+                    "state": request["state"], # One out of city/town, village, or district is required
+                    "country": request["country"] # One out of city/town, village, or district is required
+                },
+                "preferred_language": request["preferred_language"] # Optional, defaults to English
+                },
+                "city":request["city"],
+                "state": request["state"],
+            }
+    }
+    return state_init["state"]
+
 @app.post("/api/chat_endpoint")
-async def chat_endpoint(text: str = Form(None), audio_file: UploadFile = File(None)):
+async def chat_endpoint(request: KisanChatSchema):
     """
     This endpoint handles both text and audio chat requests.
 
@@ -133,11 +162,15 @@ async def chat_endpoint(text: str = Form(None), audio_file: UploadFile = File(No
     The endpoint processes the input, calls an external API, and returns
     both a text response and a synthesized audio response.
     """
-    print("HIT ENDPOINT",text)
     # text = "whats weather in delhi today"
     input_text = ""
 
     # 1. Determine request type and get input text
+    requests = request.dict()
+    text = requests["text"]
+    audio_file = requests["audio_file"]
+    image = requests["image"]
+
     if audio_file:
         print("--- Received audio file ---")
         if not audio_file.content_type.startswith("audio/"):
@@ -147,12 +180,44 @@ async def chat_endpoint(text: str = Form(None), audio_file: UploadFile = File(No
             input_text = await recognize_speech_to_text(audio_bytes)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Speech-to-Text processing failed: {e}")
-    else: # if text
+    elif image and text.strip():
+        # Encode the bytes to a base64 string
+
+        base64_image = base64.b64encode(image).decode('utf-8')
+        content_dict = {
+
+        "role": "user",
+
+        "parts": [
+
+            {"text": text},
+
+            {
+
+                "inline_data": {
+
+                    "mime_type": "image/jpeg",
+
+                    "data": base64_image
+
+                }
+
+            }
+
+        ]
+
+        }
+        input_text = content_dict
+    elif image:
+        raise HTTPException(status_code=422, detail=f"Please provide text with the image")
+    elif text and not image: # if text
         print("--- Received text input ---")
         input_text = text
-
+    else:
+        pass
     # 2. Forward text to the external API
-    external_api_response_text = await call_external_api(input_text)
+    initial_state_dict = create_initial_dict(requests)
+    external_api_response_text = await call_external_api(input_text, initial_state_dict)
 
     # 3. Pass the response to the TTS model
     try:
