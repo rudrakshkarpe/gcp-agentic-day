@@ -7,7 +7,7 @@ from vertexai.preview import rag
 from dotenv import load_dotenv
 from google.adk.tools.agent_tool import AgentTool
 from google.adk.tools import google_search
-from agents.kisan_agent.sub_agents.government_schemes_agent import prompt
+from kisan_agent.sub_agents.government_schemes_agent import prompt
 
 
 this_dir = os.path.dirname(os.path.abspath(__file__))

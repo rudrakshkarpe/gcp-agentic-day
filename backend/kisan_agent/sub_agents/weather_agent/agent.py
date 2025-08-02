@@ -1,8 +1,8 @@
 # Load environment variables from .env file
 """Wrapper to Google Search Grounding with custom prompt."""
 from google.adk.agents import Agent
-#from agents.kisan_agent.sub_agents.weather_agent.tool import get_current_weather
-from agents.kisan_agent.sub_agents.weather_agent.tool import get_current_weather
+#from kisan_agent.sub_agents.weather_agent.tool import get_current_weather
+from kisan_agent.sub_agents.weather_agent.tool import get_current_weather
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types

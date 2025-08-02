@@ -1,0 +1,29 @@
+{
+  "state": {
+    "farmer_info": {
+      "name": "Kirori Mal", # Required
+      "location": {
+        "city/town": "Bengaluru", # One out of city/town, village, or district is required
+        "state": "Karnataka", # One out of city/town, village, or district is required
+        "country": "India" # One out of city/town, village, or district is required
+      },
+      "preferred_language": "Kannada" # Optional, defaults to English
+    },
+    "plant_info": {
+      "plant_name": "Tomato",  # Required
+      "plant_variety": "Karnataka Hybrid", # Optional
+      "plant_age": "3 months", # Optional
+      "plant_health": "", # Optional 
+      "symptoms_observed": "", # Optional
+      "diseases_present": false # Optional
+    },
+    "soil_info": {
+      "soil_type": "laterite" # Optional
+    },
+    "weather_info": {
+      "current_temperature": "30°C", # Optional
+      "humidity": "60%", # Optional
+      "rainfall": "0 mm" # Optional
+    }
+  }
+}

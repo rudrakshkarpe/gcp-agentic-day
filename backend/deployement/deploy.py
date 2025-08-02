@@ -6,7 +6,7 @@ import os
 from absl import app, flags
 from dotenv import load_dotenv
 
-from agents.kisan_agent.agent import root_agent
+from kisan_agent.agent import root_agent
 
 from google.adk.sessions import VertexAiSessionService
 
