@@ -32,7 +32,7 @@ search_agent = Agent(
     description="An agent which will perform google search on user query to extract prices for nearby places.",
     disallow_transfer_to_parent=True,
     disallow_transfer_to_peers=True,
-    instruction=f"Extract wholesale commodity prices for commodity and place mentioned by user in query. Also extract information for nearby places. Perform google search using provided tool to extract mandi data.",
+    instruction=f"Extract mandi commodity prices for commodity and place mentioned by user in query. Also extract information for nearby places. You should also extract high and model commodity prices of same crop last harvest season. Perform google search using provided tool to extract mandi data.",
     tools=[   
         google_search
         ],

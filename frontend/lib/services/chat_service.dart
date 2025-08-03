@@ -5,8 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../models/message.dart';
 
 class ChatService {
-  static const String baseUrl = 'http://localhost:8084'; // Updated to match backend_v1 port
-  static const bool useMockData = true; // Set to false to use real API
+  static const String baseUrl = 'http://localhost:8084'; // Updated to match backend port
   String? _sessionId;
   
   // Generate session ID once per chat session
@@ -17,84 +16,26 @@ class ChatService {
     _sessionId = null;
   }
 
-  // Mock responses for testing
-  static const String mockAudioBase64 = ""; // Empty for now, can add actual base64 audio data if needed
-  
-  static final List<String> mockTextResponses = [
-    "ನಮಸ್ಕಾರ! ನಾನು ಕಿಸಾನ್ ಏಐ ಸಹಾಯಕ. ನಿಮ್ಮ ಕೃಷಿ ಸಂಬಂಧಿ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಲು ನಾನು ಇಲ್ಲಿದ್ದೇನೆ.",
-    "ಈ ಋತುವಿನಲ್ಲಿ ಟೊಮೇಟೊ ಬೆಳೆಗೆ ನೀರಾವರಿ ದಿನಕ್ಕೆ ಎರಡು ಬಾರಿ ಮಾಡಿ. ಮಣ್ಣಿನ ತೇವಾಂಶ ಪರೀಕ್ಷಿಸಿ.",
-    "ಬೆಂಗಳೂರಿನಲ್ಲಿ ಇಂದು ಮಳೆಯ ಸಾಧ್ಯತೆ ಇದೆ. ಕೃಷಿ ಕೆಲಸಗಳನ್ನು ಅದಕ್ಕೆ ತಕ್ಕಂತೆ ಯೋಜಿಸಿ.",
-    "ಧಾನ್ಯ ಬೆಲೆಗಳು ಈ ವಾರ ಸ್ಥಿರವಾಗಿವೆ. ಮಾರುಕಟ್ಟೆಯಲ್ಲಿ ಉತ್ತಮ ಬೇಡಿಕೆ ಇದೆ.",
-    "ಎಲೆಗಳ ಮೇಲೆ ಕಂದು ಬಣ್ಣದ ಚುಕ್ಕೆಗಳು ಕಾಣಿಸಿದರೆ ಅದು ಶಿಲೀಂಧ್ರ ಸೋಂಕು. ಸಾವಯವ ಔಷಧಿ ಬಳಸಿ.",
-  ];
-
-  static final List<String> mockImageResponses = [
-    "ಈ ಸಸ್ಯದಲ್ಲಿ ಎಲೆ ಕಲೆ ರೋಗ (Leaf Spot Disease) ಕಾಣಿಸುತ್ತಿದೆ. ಚಿಕಿತ್ಸೆ: ನೀಮ್ ಎಣ್ಣೆ ಸಿಂಪಡಿಸಿ ಮತ್ತು ಬಾಧಿತ ಎಲೆಗಳನ್ನು ತೆಗೆದುಹಾಕಿ.",
-    "ಟೊಮೇಟೊ ಬ್ಲೈಟ್ ರೋಗದ ಲಕ್ಷಣಗಳು ಕಾಣಿಸುತ್ತಿವೆ. ತಕ್ಷಣ ಕಾಪರ್ ಸಲ್ಫೇಟ್ ದ್ರಾವಣ ಸಿಂಪಡಿಸಿ.",
-    "ಸಸ್ಯದ ಬೆಳವಣಿಗೆ ಚೆನ್ನಾಗಿದೆ. ಆದರೆ ಹೆಚ್ಚು ಸಾರಜನಕ ಗೊಬ್ಬರ ಬೇಕಾಗಿದೆ. ಉರಿಯಾ ದ್ರಾವಣ ಚಿಮುಕಿಸಿ.",
-    "ಬಿಸಿಲಿನ ಸುಟ್ಟಗೆ (Sun Scorch) ಕಾರಣ ಎಲೆಗಳು ಒಣಗಿವೆ. ನೆರಳು ಜಾಲಿ ಹಾಕಿ ಸಸ್ಯಗಳನ್ನು ರಕ್ಷಿಸಿ.",
-    "ಕೀಟಗಳ ಆಕ್ರಮಣ ಕಾಣಿಸುತ್ತಿದೆ. ಸಾವಯವ ಕೀಟನಾಶಕ ಅಥವಾ ಬೇವಿನ ಎಣ್ಣೆ ಬಳಸಿ.",
-  ];
-
-  String _getRandomMockResponse(List<String> responses) {
-    final random = DateTime.now().millisecondsSinceEpoch % responses.length;
-    return responses[random];
-  }
-
   Future<ChatResponse> sendTextMessage({
     required String message,
     required String userId,
     required String language,
-    String? userName,
-    String? userCity,
-    String? userState,
-    String? userCountry,
   }) async {
-    // Return mock response if enabled
-    if (useMockData) {
-      print('Using mock response for text message: $message');
-      await Future.delayed(const Duration(milliseconds: 800)); // Simulate network delay
-      
-      return ChatResponse(
-        textResponse: _getRandomMockResponse(mockTextResponses),
-        audioResponseBase64: mockAudioBase64.isEmpty ? null : mockAudioBase64,
-        toolsUsed: ['weather_agent', 'plant_health_support'],
-        conversationId: sessionId,
-        confidence: 0.95,
-      );
-    }
-
     try {
       final url = Uri.parse('$baseUrl/api/chat_endpoint');
       
-      // Create JSON payload matching KisanChatSchema
-      final requestBody = {
-        'text': message,
-        'audio_file': null,
-        'image': null,
-        'name': userName ?? '',
-        'city': userCity ?? 'Bangalore',
-        'state': userState ?? '',
-        'country': userCountry ?? '',
-        'preferred_language': language,
-      };
+      // Use form data format to match backend expectations
+      var request = http.MultipartRequest('POST', url);
+      request.fields['text'] = message;
+      // Note: Backend doesn't use user_id, session_id, language - but we keep for future
       
-      print('Sending text message payload: ${jsonEncode(requestBody)}');
-      
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(requestBody),
-      );
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return ChatResponse.fromJson(data);
       } else {
-        print('Response status: ${response.statusCode}');
-        print('Response body: ${response.body}');
         throw ChatException(
           'Failed to send message: ${response.statusCode}',
           response.body,
@@ -117,52 +58,20 @@ class ChatService {
     required File audioFile,
     required String userId,
     required String language,
-    String? userName,
-    String? userCity,
-    String? userState,
-    String? userCountry,
   }) async {
-    // Return mock response if enabled
-    if (useMockData) {
-      print('Using mock response for voice message');
-      await Future.delayed(const Duration(milliseconds: 1200)); // Simulate network delay
-      
-      return VoiceChatResponse(
-        transcript: "ನನ್ನ ಬೆಳೆಗೆ ಏನು ಮಾಡಬೇಕು?", // Mock transcript
-        textResponse: _getRandomMockResponse(mockTextResponses),
-        audioResponseBase64: mockAudioBase64.isEmpty ? null : mockAudioBase64,
-        toolsUsed: ['speech_to_text', 'plant_health_support'],
-        conversationId: sessionId,
-        confidence: 0.92,
-      );
-    }
-
     try {
       final url = Uri.parse('$baseUrl/api/chat_endpoint');
       
-      // Read audio file and encode as base64
-      final audioBytes = await audioFile.readAsBytes();
-      final audioBase64 = base64Encode(audioBytes);
+      var request = http.MultipartRequest('POST', url);
       
-      // Create JSON payload matching KisanChatSchema
-      final requestBody = {
-        'text': '', // Empty string for voice-only messages since text is required
-        'audio_file': audioBase64,
-        'image': null,
-        'name': userName ?? '',
-        'city': userCity ?? 'Bangalore',
-        'state': userState ?? '',
-        'country': userCountry ?? '',
-        'preferred_language': language,
-      };
-      
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(requestBody),
+      // Add audio file with the exact field name backend expects
+      request.files.add(
+        await http.MultipartFile.fromPath('audio_file', audioFile.path),
       );
+      // Note: Backend doesn't use additional fields but we keep for consistency
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -192,87 +101,29 @@ class ChatService {
     required String message,
     String plantType = '',
     String symptomsDescription = '',
-    String? userName,
-    String? userCity,
-    String? userState,
-    String? userCountry,
-    String language = 'en',
   }) async {
-    // Return mock response if enabled
-    if (useMockData) {
-      print('Using mock response for image message: $message');
-      await Future.delayed(const Duration(milliseconds: 1000)); // Simulate network delay
-      
-      final mockResponse = _getRandomMockResponse(mockImageResponses);
-      return ImageChatResponse(
-        diagnosis: mockResponse,
-        diseaseName: "Leaf Spot Disease",
-        severity: "Moderate",
-        treatment: [
-          "ನೀಮ್ ಎಣ್ಣೆ ಸಿಂಪಡಿಸಿ",
-          "ಬಾಧಿತ ಎಲೆಗಳನ್ನು ತೆಗೆದುಹಾಕಿ",
-          "ಮಣ್ಣಿನ ಒಳ್ಳೆಯ ನಿರ್ವಹಣೆ ಮಾಡಿ"
-        ],
-        organicRemedies: [
-          "ಬೇವಿನ ಎಣ್ಣೆ",
-          "ಮೆಂತೆ ದ್ರಾವಣ",
-          "ಜೇನುತುಪ್ಪ ಮಿಶ್ರಣ"
-        ],
-        chemicalTreatment: [
-          "ಕಾಪರ್ ಸಲ್ಫೇಟ್",
-          "ಮ್ಯಾಂಕೋಜೆಬ್ ಸಿಂಪಡಿಸಿ"
-        ],
-        prevention: [
-          "ನಿಯಮಿತ ಪರಿಶೀಲನೆ",
-          "ಸರಿಯಾದ ಅಂತರ ಇರಿಸಿ",
-          "ನೀರಾವರಿ ನಿಯಂತ್ರಣ"
-        ],
-        confidence: 0.88,
-        audioResponseBase64: mockAudioBase64.isEmpty ? null : mockAudioBase64,
-      );
-    }
-
     try {
-      final url = Uri.parse('$baseUrl/api/chat_endpoint');
+      // Since backend doesn't have dedicated image endpoint, 
+      // we'll send a text message describing the image analysis request
+      String imageAnalysisPrompt = 'Please analyze the plant image I am sharing. ';
+      if (message.isNotEmpty) imageAnalysisPrompt += message + ' ';
+      if (plantType.isNotEmpty) imageAnalysisPrompt += 'Plant type: $plantType. ';
+      if (symptomsDescription.isNotEmpty) imageAnalysisPrompt += 'Symptoms: $symptomsDescription. ';
+      imageAnalysisPrompt += 'Please provide diagnosis, treatment recommendations, and prevention tips.';
       
-      // Read image file and encode as base64
-      final imageBytes = await imageFile.readAsBytes();
-      final imageBase64 = base64Encode(imageBytes);
-      
-      // Create JSON payload matching KisanChatSchema
-      final requestBody = {
-        'text': message,
-        'audio_file': null, // Fixed: null instead of empty string
-        'image': imageBase64, // Fixed: actual base64 image data
-        'name': userName ?? '',
-        'city': userCity ?? 'Bangalore',
-        'state': userState ?? '',
-        'country': userCountry ?? '',
-        'preferred_language': language, // Fixed: use the language parameter
-      };
-      
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(requestBody),
+      // For now, send as text message since backend doesn't support images yet
+      final chatResponse = await sendTextMessage(
+        message: imageAnalysisPrompt,
+        userId: userId,
+        language: 'en', // Default language for image analysis
       );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return ImageChatResponse.fromJson(data);
-      } else {
-        throw ChatException(
-          'Failed to analyze image: ${response.statusCode}',
-          response.body,
-        );
-      }
-    } on SocketException {
-      throw ChatException(
-        'Network error',
-        'Please check your internet connection',
+      
+      // Convert ChatResponse to ImageChatResponse format
+      return ImageChatResponse(
+        diagnosis: chatResponse.textResponse,
+        audioResponseBase64: chatResponse.audioResponseBase64,
       );
+      
     } catch (e) {
       throw ChatException(
         'Failed to analyze image',
@@ -377,19 +228,24 @@ class ImageChatResponse {
   });
 
   factory ImageChatResponse.fromJson(Map<String, dynamic> json) {
-    // Backend returns simple structure with text_response and audio_response_base64
-    String textResponse = json['text_response'] ?? '';
-    
     return ImageChatResponse(
-      diagnosis: textResponse,
-      diseaseName: null,
-      severity: null,
-      treatment: [],
-      organicRemedies: [],
-      chemicalTreatment: [],
-      prevention: [],
-      confidence: null,
-      audioResponseBase64: json['audio_response_base64'],
+      diagnosis: json['diagnosis'] ?? '',
+      diseaseName: json['disease_name'],
+      severity: json['severity'],
+      treatment: json['treatment'] != null 
+          ? List<String>.from(json['treatment'])
+          : [],
+      organicRemedies: json['organic_remedies'] != null 
+          ? List<String>.from(json['organic_remedies'])
+          : [],
+      chemicalTreatment: json['chemical_treatment'] != null 
+          ? List<String>.from(json['chemical_treatment'])
+          : [],
+      prevention: json['prevention'] != null 
+          ? List<String>.from(json['prevention'])
+          : [],
+      confidence: json['confidence']?.toDouble(),
+      audioResponseBase64: json['audio_response_base64'] ?? json['audio_url'],
     );
   }
 }

@@ -3,7 +3,7 @@ import aiohttp
 
 # from dotenv import load_dotenv
 # load_dotenv()
-WEATHER_API_KEY = 'a1842e06b07c424fbcf115112252207'
+WEATHER_API_KEY="a1842e06b07c424fbcf115112252207"
 
 async def get_current_weather(city: str) -> dict:
     """
@@ -35,7 +35,7 @@ async def get_current_weather(city: str) -> dict:
     if city_normalized in mock_weather_db:
         return mock_weather_db[city_normalized]
     else:
-        WEATHER_API_KEY = os.getenv("WEATHER_API_KEY") # Get your API key from .env
+        # WEATHER_API_KEY = os.getenv("WEATHER_API_KEY") # Get your API key from .env
         if not WEATHER_API_KEY:
             result["Current_weather_report"]={"status": "error", "error_message": "Weather API key not configured."}
             result["One_week_weather_forecast"]={"status": "error", "error_message": "Weather API key not configured."}

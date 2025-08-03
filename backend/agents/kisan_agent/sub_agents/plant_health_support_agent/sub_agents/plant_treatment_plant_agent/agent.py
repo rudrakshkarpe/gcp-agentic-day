@@ -8,11 +8,8 @@ plant_treatment_plan_generator_agent = Agent(
     name="plant_treatment_plan_generator_agent",
     description="""
     A specialized agent for generating treatment plans for identified plant diseases. It takes into account the specific disease, the plant type, and the local farming practices to create a tailored treatment plan.
-
-    Summarize the final response in 500 or less words. If the user asks for a detailed answer, only then provide the detailed answer.
     """,
     instruction=prompt.PLANT_TREATMENT_PLAN_GENERATOR_AGENT_INSTRUCTION,
     output_key="treatment_plan",
     disallow_transfer_to_peers=True,
-    # tools=[google_search]
 )

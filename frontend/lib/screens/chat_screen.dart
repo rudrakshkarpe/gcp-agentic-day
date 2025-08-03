@@ -7,20 +7,12 @@ import '../services/language_service.dart';
 import '../services/auth_service.dart';
 import '../services/chat_service.dart';
 import '../services/audio_service.dart';
-import '../services/user_profile_service.dart';
 import '../widgets/enhanced_message_bubble.dart';
 
 class ChatScreen extends StatefulWidget {
   final String selectedLanguage;
-  final File? initialImageFile;
-  final String? initialImagePrompt;
   
-  const ChatScreen({
-    Key? key, 
-    required this.selectedLanguage,
-    this.initialImageFile,
-    this.initialImagePrompt,
-  }) : super(key: key);
+  const ChatScreen({Key? key, required this.selectedLanguage}) : super(key: key);
   
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -37,13 +29,6 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     _addWelcomeMessage();
     _loadChatHistory();
-    
-    // If initial image data is provided, send it automatically
-    if (widget.initialImageFile != null && widget.initialImagePrompt != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _sendImageMessage(widget.initialImageFile!, widget.initialImagePrompt!);
-      });
-    }
   }
 
   Future<void> _loadChatHistory() async {
@@ -103,17 +88,10 @@ class _ChatScreenState extends State<ChatScreen> {
     });
 
     try {
-      // Get user profile data for the request
-      final userProfile = await UserProfileService.getUserProfile();
-      
       final response = await _chatService.sendTextMessage(
         message: userMessage,
         userId: userId,
         language: languageService.selectedLanguage,
-        userName: userProfile['name'],
-        userCity: userProfile['city'],
-        userState: userProfile['state'],
-        userCountry: userProfile['country'],
       );
 
       setState(() {
@@ -159,82 +137,6 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  Future<void> _sendImageMessage(File imageFile, String prompt) async {
-    final authService = context.read<AuthService>();
-    final languageService = context.read<LanguageService>();
-    
-    final userId = authService.userId;
-    if (userId == null) {
-      _showErrorSnackBar('Please sign in to send images');
-      return;
-    }
-
-    setState(() {
-      _messages.add(Message(
-        content: languageService.selectedLanguage == 'kn' 
-            ? '📷 ಚಿತ್ರ: $prompt'
-            : '📷 Image: $prompt',
-        role: MessageRole.user,
-        type: MessageType.image,
-      ));
-      _isLoading = true;
-    });
-
-    try {
-      // Get user profile data for the request
-      final userProfile = await UserProfileService.getUserProfile();
-      
-      final response = await _chatService.sendImageMessage(
-        imageFile: imageFile,
-        userId: userId,
-        message: prompt,
-        userName: userProfile['name'],
-        userCity: userProfile['city'],
-        userState: userProfile['state'],
-        userCountry: userProfile['country'],
-        language: languageService.selectedLanguage,
-      );
-
-      setState(() {
-        _messages.add(Message(
-          content: response.diagnosis,
-          role: MessageRole.assistant,
-          audioUrl: response.audioResponseBase64,
-        ));
-        _isLoading = false;
-      });
-
-      // Auto-play audio response if available
-      if (response.audioResponseBase64 != null && response.audioResponseBase64!.isNotEmpty) {
-        final audioService = context.read<AudioService>();
-        try {
-          await audioService.playAudioFromBase64(response.audioResponseBase64!);
-        } catch (e) {
-          print('Failed to auto-play image response audio: $e');
-          // Don't show error to user for auto-play failures
-        }
-      }
-
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-
-      String errorMessage = languageService.selectedLanguage == 'kn' 
-          ? 'ಚಿತ್ರ ವಿಶ್ಲೇಷಣೆ ವಿಫಲವಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'
-          : 'Image analysis failed. Please try again.';
-
-      if (e is ChatException) {
-        if (e.message.contains('Network error')) {
-          errorMessage = languageService.selectedLanguage == 'kn'
-              ? 'ನೆಟ್‌ವರ್ಕ್ ದೋಷ. ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ.'
-              : 'Network error. Please check your internet connection.';
-        }
-      }
-
-      _showErrorSnackBar(errorMessage);
-    }
-  }
 
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -261,7 +163,7 @@ class _ChatScreenState extends State<ChatScreen> {
           backgroundColor: Colors.grey[50],
           appBar: AppBar(
             title: Text(
-              currentLanguage == 'kn' ? 'ಕೃಷಿ ಮಿತ್ರ' : 'Kisan Kavach',
+              currentLanguage == 'kn' ? 'ಕೃಷಿ ಮಿತ್ರ' : 'Kisan AI',
               style: currentLanguage == 'kn'
                   ? AppTheme.kannadaHeading.copyWith(
                       color: Colors.white,
@@ -520,7 +422,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Icon(Icons.agriculture, color: AppTheme.primaryGreen),
             SizedBox(width: 8),
             Text(
-              currentLanguage == 'kn' ? 'ಕೃಷಿ ಮಿತ್ರ ಬಗ್ಗೆ' : 'About Kisan Kavach',
+              currentLanguage == 'kn' ? 'ಕೃಷಿ ಮಿತ್ರ ಬಗ್ಗೆ' : 'About Kisan AI',
               style: currentLanguage == 'kn'
                   ? AppTheme.kannadaHeading.copyWith(fontSize: 18)
                   : TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -767,17 +669,10 @@ class _ChatScreenState extends State<ChatScreen> {
     });
 
     try {
-      // Get user profile data for the request
-      final userProfile = await UserProfileService.getUserProfile();
-      
       final response = await _chatService.sendVoiceMessage(
         audioFile: audioFile,
         userId: userId,
         language: languageService.selectedLanguage,
-        userName: userProfile['name'],
-        userCity: userProfile['city'],
-        userState: userProfile['state'],
-        userCountry: userProfile['country'],
       );
 
       setState(() {

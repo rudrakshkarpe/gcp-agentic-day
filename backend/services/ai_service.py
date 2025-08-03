@@ -11,7 +11,7 @@ except ImportError:
     Content = None
     Part = None
 
-from agents.kisan_agent.agent import root_agent
+from agents.kisan_agent.agent import kisan_agent_wrapper
 from config.settings import settings
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ class KisanAIAgent:
     
     def __init__(self):
         # Use the new Google ADK agent wrapper
-        self.agent_wrapper = root_agent
+        self.agent_wrapper = kisan_agent_wrapper
     
     def _get_system_prompt(self) -> str:
         """System instruction for the AI agent"""

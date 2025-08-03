@@ -20,6 +20,8 @@ Then call 'google_search' with user query
 When all the tools have been called, or given any other user utterance, 
 - Combine reponse from all the tools and analyze market trend to provide farmers with actionable insights about right time to sell thier crops.
 - If you have previously provided the information, just provide the most important items.
+- Compare the current prices with the prices from last harvest season and suggest them whether is it the right time to sell or not.
+- Provide info in bulleted format
 - If the information is in JSON, convert it into user friendly format.
 - Return all important headers between <b>..</b> tag instead of between "**"
 - Limit overall response for less than 500 characters.
@@ -45,7 +47,7 @@ Perform below steps in step wise manner:
     </input1_foramt>
     Explanation 1: 
         1. In above example, input1 is dictionary of commodities as keys for which user wants to know the mandi prices. Each commodity key has 'state' and 'district' keys which will have list of those values extracted from user query.
-        2. If neither district nor state is mentioned in query, then by default take state value ['Karnataka'] and district value as ['Bengaluru'].
+        2. If neither district nor state is mentioned in query, then by default take state value {state} and district value as {city}.
         3. The above example is only for explanation purpose, do not use it to respond back.
         4. Extract all required data for input from user query.
 """

@@ -138,7 +138,6 @@ dependencies = [
     { name = "absl-py" },
     { name = "aiofiles" },
     { name = "bs4" },
-    { name = "cloudpickle" },
     { name = "fastapi" },
     { name = "firebase-admin" },
     { name = "google-adk" },
@@ -157,19 +156,17 @@ dependencies = [
     { name = "pydantic" },
     { name = "python-dotenv" },
     { name = "python-multipart" },
-    { name = "requests" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "absl-py", specifier = ">=2.2.1" },
+    { name = "absl-py", specifier = "==2.3.1" },
     { name = "aiofiles", specifier = ">=24.1.0" },
     { name = "bs4", specifier = "==0.0.2" },
-    { name = "cloudpickle" },
     { name = "fastapi", specifier = ">=0.116.1" },
     { name = "firebase-admin", specifier = ">=6.9.0" },
-    { name = "google-adk", specifier = "==1.7.0" },
+    { name = "google-adk" },
     { name = "google-auth", specifier = ">=2.40.3" },
     { name = "google-cloud-aiplatform", specifier = ">=1.104.0" },
     { name = "google-cloud-core", specifier = ">=2.4.3" },
@@ -185,7 +182,6 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "python-dotenv", specifier = ">=1.1.1" },
     { name = "python-multipart", specifier = ">=0.0.20" },
-    { name = "requests", specifier = ">=2.32.3" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.35.0" },
 ]
 
