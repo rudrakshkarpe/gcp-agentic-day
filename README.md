@@ -223,10 +223,12 @@ class AppConfig {
 
 ### 5. Flutter SDK Installation
 
+> 📱 **Click to expand Flutter SDK Setup Guide**
+
 #### Install Flutter SDK
 
 1. **Download Flutter SDK:**
-   - Visit [Flutter.dev](https://flutter.dev/docs/get-started/install)
+   - Visit [Flutter.dev](https://flutter.dev/docs/get-started/install)  
    - Download the appropriate version for your operating system
    - Extract to a permanent location (e.g., `/Users/[username]/development/flutter` on macOS)
 
@@ -246,6 +248,9 @@ class AppConfig {
    This will show you what dependencies you need to install.
 
 ### 6. Android Development Setup
+
+<details>
+<summary>🤖 <strong>Android Studio & Emulator Setup</strong></summary>
 
 #### Android Studio Installation
 
@@ -271,7 +276,10 @@ class AppConfig {
    export PATH=$PATH:$ANDROID_HOME/platform-tools
    ```
 
-#### Android Virtual Device (AVD) Setup
+</details>
+
+<details>
+<summary>📱 <strong>Android Virtual Device (AVD) Setup</strong></summary>
 
 1. **Create AVD:**
    ```bash
@@ -299,7 +307,10 @@ class AppConfig {
    # Or start from Android Studio AVD Manager
    ```
 
-#### Android Project Configuration
+</details>
+
+<details>
+<summary>⚙️ <strong>Android Project Configuration</strong></summary>
 
 1. **Update Build Configuration:**
    Edit `android/app/build.gradle`:
@@ -336,7 +347,12 @@ class AppConfig {
    flutter run -d <device-id>
    ```
 
+</details>
+
 ### 7. iOS Development Setup
+
+<details>
+<summary>🍎 <strong>Xcode Installation & Setup</strong></summary>
 
 #### Xcode Installation
 
@@ -359,7 +375,10 @@ class AppConfig {
    flutter doctor
    ```
 
-#### iOS Simulator Setup
+</details>
+
+<details>
+<summary>📱 <strong>iOS Simulator Setup</strong></summary>
 
 1. **Open iOS Simulator:**
    ```bash
@@ -379,7 +398,10 @@ class AppConfig {
    - iPhone 13 (iOS 15.0+)  
    - iPad Pro (12.9-inch) for tablet testing
 
-#### iOS Project Configuration
+</details>
+
+<details>
+<summary>⚙️ <strong>iOS Project Configuration</strong></summary>
 
 1. **Install CocoaPods:**
    ```bash
@@ -408,7 +430,10 @@ class AppConfig {
    - Select your development team
    - Xcode will automatically create provisioning profiles
 
-#### Running on iOS Device
+</details>
+
+<details>
+<summary>🚀 <strong>Running on iOS Devices</strong></summary>
 
 1. **iOS Simulator:**
    ```bash
@@ -434,9 +459,12 @@ class AppConfig {
    flutter run -d <device-id>
    ```
 
+</details>
+
 ### 8. Development Environment Verification
 
-#### Flutter Doctor Checklist
+<details>
+<summary>✅ <strong>Flutter Doctor Checklist</strong></summary>
 
 Run `flutter doctor -v` and ensure all items show checkmarks:
 
@@ -448,7 +476,10 @@ Run `flutter doctor -v` and ensure all items show checkmarks:
 - ✅ VS Code (optional but recommended)
 - ✅ Connected device
 
-#### Common Setup Issues and Solutions
+</details>
+
+<details>
+<summary>🔧 <strong>Common Setup Issues & Solutions</strong></summary>
 
 1. **Android License Issues:**
    ```bash
@@ -481,7 +512,18 @@ Run `flutter doctor -v` and ensure all items show checkmarks:
    # Close unnecessary applications during development
    ```
 
+</details>
+
 ### 9. Run the Application
+
+#### Quick Start
+```bash
+flutter pub get
+flutter run
+```
+
+<details>
+<summary>🚀 <strong>Development Commands</strong></summary>
 
 #### Development Mode
 
@@ -516,7 +558,10 @@ flutter run -d <ios-device-id>
 flutter run -d "iPhone 14 Pro Simulator"
 ```
 
-#### Development Tools
+</details>
+
+<details>
+<summary>🛠️ <strong>Development Tools & Commands</strong></summary>
 
 ```bash
 # List all available devices/emulators
@@ -538,7 +583,10 @@ flutter build ios      # iOS build
 flutter build web      # Web build
 ```
 
-#### Troubleshooting Development Setup
+</details>
+
+<details>
+<summary>🔧 <strong>Troubleshooting Development Setup</strong></summary>
 
 1. **Clean and Rebuild:**
    ```bash
@@ -567,6 +615,8 @@ flutter build web      # Web build
    # iOS: Clean Xcode build
    cd ios && xcodebuild clean && cd ..
    ```
+
+</details>
 
 ## Agent System
 
