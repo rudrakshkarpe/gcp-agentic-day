@@ -221,30 +221,352 @@ class AppConfig {
 }
 ```
 
-### 5. Platform-Specific Setup
+### 5. Flutter SDK Installation
 
-#### iOS Setup
+#### Install Flutter SDK
+
+1. **Download Flutter SDK:**
+   - Visit [Flutter.dev](https://flutter.dev/docs/get-started/install)
+   - Download the appropriate version for your operating system
+   - Extract to a permanent location (e.g., `/Users/[username]/development/flutter` on macOS)
+
+2. **Add Flutter to PATH:**
+   ```bash
+   # Add to your shell profile (.bashrc, .zshrc, etc.)
+   export PATH="$PATH:/path/to/flutter/bin"
+   
+   # Verify installation
+   flutter --version
+   ```
+
+3. **Run Flutter Doctor:**
+   ```bash
+   flutter doctor
+   ```
+   This will show you what dependencies you need to install.
+
+### 6. Android Development Setup
+
+#### Android Studio Installation
+
+1. **Download and Install Android Studio:**
+   - Download from [developer.android.com](https://developer.android.com/studio)
+   - Install with default settings
+   - Launch Android Studio and complete the setup wizard
+
+2. **Install Required SDKs:**
+   - Open Android Studio → SDK Manager
+   - Install Android SDK (API level 33 or higher recommended)
+   - Install Android SDK Build-Tools
+   - Install Android Emulator
+
+3. **Configure Environment Variables:**
+   ```bash
+   # Add to your shell profile
+   export ANDROID_HOME=$HOME/Library/Android/sdk  # macOS
+   export ANDROID_HOME=$HOME/Android/Sdk          # Linux
+   export PATH=$PATH:$ANDROID_HOME/emulator
+   export PATH=$PATH:$ANDROID_HOME/tools
+   export PATH=$PATH:$ANDROID_HOME/tools/bin
+   export PATH=$PATH:$ANDROID_HOME/platform-tools
+   ```
+
+#### Android Virtual Device (AVD) Setup
+
+1. **Create AVD:**
+   ```bash
+   # Open AVD Manager
+   android avd
+   
+   # Or from Android Studio: Tools → AVD Manager
+   ```
+
+2. **Recommended AVD Configuration:**
+   - Device: Pixel 7 or Pixel 6
+   - System Image: API 33 (Android 13) or higher
+   - RAM: 4GB or more
+   - Internal Storage: 6GB or more
+   - Enable Hardware Acceleration (Intel HAXM/AMD)
+
+3. **Start Emulator:**
+   ```bash
+   # List available AVDs
+   flutter emulators
+   
+   # Launch specific emulator
+   flutter emulators --launch <emulator-name>
+   
+   # Or start from Android Studio AVD Manager
+   ```
+
+#### Android Project Configuration
+
+1. **Update Build Configuration:**
+   Edit `android/app/build.gradle`:
+   ```gradle
+   android {
+       compileSdkVersion 34
+       ndkVersion flutter.ndkVersion
+       
+       defaultConfig {
+           minSdkVersion 21  # Required minimum
+           targetSdkVersion 34
+           # ... other configurations
+       }
+   }
+   ```
+
+2. **Add Required Permissions:**
+   Edit `android/app/src/main/AndroidManifest.xml`:
+   ```xml
+   <uses-permission android:name="android.permission.INTERNET" />
+   <uses-permission android:name="android.permission.RECORD_AUDIO" />
+   <uses-permission android:name="android.permission.CAMERA" />
+   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+   ```
+
+3. **Test Android Setup:**
+   ```bash
+   # With emulator running
+   flutter run -d android
+   
+   # Or specify device
+   flutter devices
+   flutter run -d <device-id>
+   ```
+
+### 7. iOS Development Setup
+
+#### Xcode Installation
+
+1. **Install Xcode:**
+   - Download from Mac App Store (requires macOS)
+   - Or download from [developer.apple.com](https://developer.apple.com/xcode/)
+   - Install Xcode Command Line Tools:
+   ```bash
+   xcode-select --install
+   ```
+
+2. **Accept Xcode License:**
+   ```bash
+   sudo xcodebuild -license accept
+   ```
+
+3. **Verify Xcode Installation:**
+   ```bash
+   xcodebuild -version
+   flutter doctor
+   ```
+
+#### iOS Simulator Setup
+
+1. **Open iOS Simulator:**
+   ```bash
+   # Open Simulator app
+   open -a Simulator
+   
+   # Or from Xcode: Xcode → Open Developer Tool → Simulator
+   ```
+
+2. **Install Additional Simulators:**
+   - Xcode → Preferences → Components
+   - Download required iOS versions (iOS 15.0+ recommended)
+   - Or use Simulator → Device → Manage Devices
+
+3. **Recommended Simulator Devices:**
+   - iPhone 14 Pro (iOS 16.0+)
+   - iPhone 13 (iOS 15.0+)  
+   - iPad Pro (12.9-inch) for tablet testing
+
+#### iOS Project Configuration
+
+1. **Install CocoaPods:**
+   ```bash
+   # Install CocoaPods (Ruby gem manager)
+   sudo gem install cocoapods
+   
+   # Navigate to iOS directory and install pods
+   cd ios
+   pod install
+   cd ..
+   ```
+
+2. **Configure iOS Deployment Target:**
+   - Open `ios/Runner.xcworkspace` in Xcode
+   - Select Runner project → General
+   - Set Deployment Target to iOS 12.0 or higher
+
+3. **Apple Developer Account (for Physical Device):**
+   - Sign up at [developer.apple.com](https://developer.apple.com)
+   - Add your account in Xcode → Preferences → Accounts
+   - Select your team in Runner → Signing & Capabilities
+
+4. **Code Signing (for Physical Device):**
+   - In Xcode, select Runner target
+   - Go to Signing & Capabilities
+   - Select your development team
+   - Xcode will automatically create provisioning profiles
+
+#### Running on iOS Device
+
+1. **iOS Simulator:**
+   ```bash
+   # List available iOS simulators
+   flutter emulators
+   
+   # Launch simulator
+   flutter emulators --launch apple_ios_simulator
+   
+   # Run app on simulator
+   flutter run -d ios
+   ```
+
+2. **Physical iOS Device:**
+   ```bash
+   # Connect device via USB
+   # Trust computer on device when prompted
+   
+   # List connected devices
+   flutter devices
+   
+   # Run on specific device
+   flutter run -d <device-id>
+   ```
+
+### 8. Development Environment Verification
+
+#### Flutter Doctor Checklist
+
+Run `flutter doctor -v` and ensure all items show checkmarks:
+
+- ✅ Flutter SDK (Channel stable, version 3.16.0+)
+- ✅ Android toolchain - develop for Android devices
+- ✅ Xcode - develop for iOS and macOS
+- ✅ Chrome - develop for the web
+- ✅ Android Studio
+- ✅ VS Code (optional but recommended)
+- ✅ Connected device
+
+#### Common Setup Issues and Solutions
+
+1. **Android License Issues:**
+   ```bash
+   flutter doctor --android-licenses
+   # Accept all licenses
+   ```
+
+2. **iOS CocoaPods Issues:**
+   ```bash
+   cd ios
+   rm Podfile.lock
+   rm -rf Pods
+   pod install
+   cd ..
+   ```
+
+3. **Flutter SDK Issues:**
+   ```bash
+   flutter clean
+   flutter pub get
+   flutter doctor
+   ```
+
+4. **Performance Optimization:**
+   ```bash
+   # Enable hardware acceleration for Android emulator
+   # In BIOS: Enable Intel VT-x or AMD-V
+   
+   # For iOS Simulator, ensure sufficient RAM allocation
+   # Close unnecessary applications during development
+   ```
+
+### 9. Run the Application
+
+#### Development Mode
+
 ```bash
-cd ios
-pod install
-cd ..
-```
+# Install dependencies first
+flutter pub get
 
-#### Android Setup
-- Ensure `minSdkVersion` is 21 or higher in `android/app/build.gradle`
-- Add internet permissions in `android/app/src/main/AndroidManifest.xml`
-
-### 6. Run the Application
-
-```bash
-# For development
+# Run on available device (auto-detect)
 flutter run
 
-# For specific platform
-flutter run -d chrome  # Web
-flutter run -d ios     # iOS
-flutter run -d android # Android
+# Run with hot reload enabled (default in debug mode)
+flutter run --hot
+
+# Run in release mode (optimized performance)
+flutter run --release
 ```
+
+#### Platform-Specific Execution
+
+```bash
+# Web Development
+flutter run -d chrome
+flutter run -d web-server --web-port 8080
+
+# Android Development  
+flutter run -d android
+flutter run -d <android-device-id>
+
+# iOS Development
+flutter run -d ios
+flutter run -d <ios-device-id>
+flutter run -d "iPhone 14 Pro Simulator"
+```
+
+#### Development Tools
+
+```bash
+# List all available devices/emulators
+flutter devices
+
+# List available emulators
+flutter emulators
+
+# Launch specific emulator
+flutter emulators --launch <emulator-name>
+
+# Enable debugging
+flutter run --debug
+flutter attach  # Attach to running app
+
+# Build without running
+flutter build apk      # Android APK
+flutter build ios      # iOS build
+flutter build web      # Web build
+```
+
+#### Troubleshooting Development Setup
+
+1. **Clean and Rebuild:**
+   ```bash
+   flutter clean
+   flutter pub get
+   flutter run
+   ```
+
+2. **Reset Flutter Configuration:**
+   ```bash
+   flutter config --clear-features
+   flutter doctor
+   ```
+
+3. **Update Flutter and Dependencies:**
+   ```bash
+   flutter upgrade
+   flutter pub upgrade
+   ```
+
+4. **Platform-Specific Issues:**
+   ```bash
+   # Android: Clear Gradle cache
+   cd android && ./gradlew clean && cd ..
+   
+   # iOS: Clean Xcode build
+   cd ios && xcodebuild clean && cd ..
+   ```
 
 ## Agent System
 
