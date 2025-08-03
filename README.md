@@ -5,7 +5,7 @@ Kisan Kavach is an intelligent farming assistant built with Google Cloud's Agent
 ## Project Demo
 
 <div align="center">
-  <img src="./assets/demo_application.gif" alt="Kisan Kavach - AI-Powered Farming Assistant Demo" width="700" height="auto">
+  <img src="./assets/demo_application.gif" alt="Kisan Kavach - AI-Powered Farming Assistant Demo" width="300" height="600">
   <br>
   <em>🌾 Experience Kisan Kavach in action - Voice-powered farming assistance in Kannada & English</em>
 </div>
